@@ -1,0 +1,69 @@
+User (Admin)
+  User ID
+  User email
+  User name
+  Group [ Group ID ]
+
+Group
+  Group ID
+  Group password
+  Group name
+  member [
+      member.email,
+      member.email,
+      member.email
+  ]
+  List ID [
+    list id,
+    list id
+  ]
+  Temp url
+  
+Member
+  [
+    {
+      id,
+      name, 
+      email,
+      fliped
+      voted [
+        {list id, list item id}
+      ],
+      group id
+    }
+  ]
+
+List-flip
+  List ID
+  type = "flip"
+  items [
+    {
+      item id,
+      item-face, (boolean)
+      item name
+    }
+  ]
+
+List-vote
+  List ID
+  type = "vote"
+  items [
+    {
+      item id,
+      item name,
+      number of votes
+    }
+  ]
+  allowed number of selections {number}
+
+Message
+  [
+    {
+      Group ID,
+      messages [
+        {
+          member.id,
+          message string
+        }
+      ]
+  ]
