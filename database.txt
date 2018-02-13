@@ -2,10 +2,11 @@ User (Admin)
   User ID
   User email
   User name
-  Group [ Group ID ]
+  Created Group [ Group ID ]
 
 Group
   Group ID
+  Created by User ID
   Group password
   Group name
   member [
