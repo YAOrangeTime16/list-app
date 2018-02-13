@@ -1,28 +1,26 @@
 User (Admin)
-  User ID
-  User email
-  User name
-  Group [ Group ID ]
+  -- User ID
+  -- User email
+  -- User name
+  -- Group [ Group ID ]
 
 Group
-  Group ID
-  Group password
-  Group name
-  member [
+  -- Group ID
+  -- Group password
+  -- Group name
+  -- member [
       member.email,
       member.email,
       member.email
-  ]
-  List ID [
-    list id,
-    list id
-  ]
-  Temp url
+   ]
+  -- List ID [
+    {list-flip: true, list id},
+    {list-vote: true, list id},
+   ]
+  -- Temp url
   
 Member
-  [
-    {
-      id,
+  --member id
       name, 
       email,
       fliped
@@ -30,13 +28,11 @@ Member
         {list id, list item id}
       ],
       group id
-    }
-  ]
 
 List-flip
-  List ID
-  type = "flip"
-  items [
+  -- List ID
+  -- type = "flip"
+  -- items [
     {
       item id,
       item-face, (boolean)
@@ -45,25 +41,34 @@ List-flip
   ]
 
 List-vote
-  List ID
-  type = "vote"
-  items [
+  -- List ID
+  -- type = "vote"
+  -- items [
     {
       item id,
       item name,
       number of votes
     }
   ]
-  allowed number of selections {number}
+  -- allowed number of selections {number}
 
-Message
-  [
-    {
-      Group ID,
-      messages [
+Chat
+  -- Group ID / url 
+  -- messages [
         {
           member.id,
-          message string
-        }
-      ]
-  ]
+          message 1
+        },
+        {
+          member.id,
+          message 2
+        },
+    ]
+
+  ユーザーへのアクセス権
+  リスト作成にはユーザーは登録する必要がある
+  チャットシステムを使うには、メンバーも登録する必要がある
+  リストシステムのみの場合には、メンバは匿名でURLへのアクセス権を得る
+
+  一時的URLの作成とRoutingについて
+  Firebaseでのユーザー認証について
