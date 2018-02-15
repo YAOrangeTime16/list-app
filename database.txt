@@ -72,3 +72,29 @@ Chat
 
   一時的URLの作成とRoutingについて
   Firebaseでのユーザー認証について
+
+  Redirectについて
+  グループとしてログインする場合には、匿名認証を許可する
+  アプリの登録ユーザーとしてログインする場合は、Email&Password認証を必要とする
+
+  匿名ユーザーがグループページにアクセスしようとする時
+  グループURL（ID）とグループパスワードでページを見ることができる
+
+  この時、Routerの仕組みは？
+
+  アプリのランディングページで、
+    グループページにログイン
+    登録ユーザーとしてグループを管理するためにログイン
+    新規登録
+  の３通りが考えられる
+
+  まずはRouterのRedierctと認証システムについて理解する
+  それと同時進行で、ページコンポーネントも作成していく
+
+  import ... from './...'
+  このシンタックスは、このままではモジュール内で使うことができない。
+  しかし、これをモジュール内に組み込んで、アプリ全体のデータ読み込み順番をコントロールすることができる
+  YouTube "Code Splitting with React and React Router v4"
+
+  YouTube
+  "URL Parameters with React Router" TylerMcGinnis.com
