@@ -21,12 +21,18 @@ export default class CreateGroup extends Component {
       <form>
         <input name="groupName" value={groupName} onChange={this._setValue} type="text" placeholder="Group Name" />
         <input name="groupPassword" value={groupPassword} onChange={this._setValue} type="password" placeholder="Group Password" />
+        <Button
+          clickAction={e=>{
+            e.preventDefault()
+            resetModuleCall()
+          }}
+          title="Cancel"/>
         <Button 
           clickAction={e =>{
             e.preventDefault();
             resetModuleCall()
             addGroup(groupName, groupPassword)}} 
-          title="Create Group" />
+          title="Add This Group" />
       </form>
     )
   }

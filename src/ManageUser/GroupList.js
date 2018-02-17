@@ -1,17 +1,25 @@
 import React, {Component} from 'react';
 import firebase from '../firebase';
+import Button from './Button';
 
 export default class GroupList extends Component {
 
-  _renderGroupItem = (groupArray) => groupArray.map(item => <li key={item.groupUrl}>{item.groupName}/{item.groupUrl}</li>)
+  _renderGroupItem = (listArray) => {
+    if(listArray){
+      return (
+        <ul>
+          {listArray.map(item => <li key={item.groupId}> {item.groupName} {item.groupId} </li>)}
+        </ul>
+      )
+    }
+  }
 
   render(){
-    const {groups} = this.props;
+    const {myGroups} = this.props.userInfo;
+    const groupList = this._renderGroupItem(myGroups)
     return(
       <div>
-        <ul>
-          {this._renderGroupItem(groups)}
-        </ul>
+          {groupList}
       </div>
     )
   }

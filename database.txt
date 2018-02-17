@@ -98,3 +98,6 @@ Chat
 
   YouTube
   "URL Parameters with React Router" TylerMcGinnis.com
+
+Stack overflow: GroupList error
+  https://stackoverflow.com/questions/24706267/cannot-read-property-map-of-undefined

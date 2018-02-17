@@ -2,8 +2,14 @@ import React, {Component} from 'react';
 import firebase from '../firebase';
 
 import Button from './Button';
+import CreateGroup from './CreateGroup';
 import GroupList from './GroupList';
 
+/** Helper function
+ * @param {array} objectArray
+ * @param {object} checkObject - An object to be checked duplication with the first param of object array
+ */ 
+/*
 const duplicationCheck = (objectArray, checkObject) =>{
 	const filteredArray = objectArray.filter( item => item.groupName !== checkObject.groupName )
 	if(filteredArray.length !== objectArray.length){
@@ -11,66 +17,61 @@ const duplicationCheck = (objectArray, checkObject) =>{
 	}
 	return true
 }
+*/
 
 export default class Admin extends Component {
 	state = {
-		createGroup: null,
-		groups: [],
-		userId: null,
+		createGroup: false,
+		userId: this.props.userId,
 		userKey: null,
 		error: ''
 	}
 
-	componentDidMount(){
-		firebase.database().ref(`/groups`).on('child_added', snap=>{
-			this.setState({groups: [...this.state.groups, snap.val()]})
-		})
-		//this.getUserKey()
-	}
-	getUserKey = () => {
-		firebase.database().ref(`/users`).on('add_child', snap => {
-			this.setState({userKey: snap.key})
-		})
-		
-	}
-
-	_createGroup = () => {
-		this.setState({error: ''});
-		import('./CreateGroup')
-		.then(module=>this.setState({createGroup: module.default}));
-		const userInfo = firebase.auth().currentUser;
-		this.setState({userId: userInfo.uid})
-	}
-
 	_addGroup = (name, pw) => {
-		const groupObject = {groupName: name, groupPass: pw, user: this.state.userId}
-		const checkArray = [...this.state.groups]
-		const readyToAdd = duplicationCheck(checkArray, groupObject);
-		if(readyToAdd){
-			firebase.database().ref(`/groups`).push(groupObject)
-			.then(group=>
-			firebase.database().ref(`/groups`).child(`/${group.key}`).update({groupUrl: group.key})
-		)
-			this.setState({groups: [...this.state.groups, groupObject]})
-		} else {
-			this.setState({error: 'The group name exists already'})
+		const { userId } = this.state;
+		const { userInfo } = this.props;
+
+		const groupObject = {
+			groupName: name,
+			groupPass: pw,
+			uid: userInfo.uid
 		}
+
+		firebase.database().ref(`/groups`).push(groupObject)
+		.then(group=>{
+			//set groups url to the group object
+			firebase.database().ref(`/groups`).child(`/${group.key}`).update({groupUrl: group.key})
+			//set groups id under the user info
+			const userRef = firebase.database().ref(`/users/${userInfo.uid}`);
+			if(userInfo.myGroups){
+				const updatedGroups = [...userInfo.myGroups, {groupName: name, groupId: group.key}];
+				const updatedUserInfo = Object.assign(userInfo, {myGroups: updatedGroups} )
+				userRef.update({myGroups: updatedGroups})
+			} else {
+				userRef.update({myGroups: [{groupName: name, groupId: group.key}]})
+			}
+		})
 	}
 	
-	_resetModuleCall = () => this.setState({createGroup: null})
+	_openAddGroup = () => {
+		this.setState({error: '', createGroup: true})
+	}
+
+	_resetModuleCall = () => this.setState({createGroup: false})
 
 	render() {
-		const { createGroup: CreateGroup, groups, error } = this.state;
-		const { logout } = this.props;
+		const { createGroup, error } = this.state;
+		const { logout, userInfo } = this.props;
 		return(
 			<section>
-				<h1>Admin Page</h1>
+				<h1>{userInfo.displayName || userInfo.email}</h1>
 				<div>{error}</div>
-				{CreateGroup 
+				{
+					createGroup
 					? <CreateGroup addGroup={this._addGroup} resetModuleCall={this._resetModuleCall}/> 
-					: <Button clickAction={this._createGroup} title="Create Group" />
+					: <Button clickAction={this._openAddGroup} title="Create Group" />
 				}
-				<GroupList groups={groups} groupName="My Gr" groupKey="grkey" />
+				<GroupList userInfo={userInfo} />
 				<Button clickAction={logout} title="Log out" />
 				</section>
 		)
