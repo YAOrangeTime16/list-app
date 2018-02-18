@@ -1,38 +1,34 @@
 import React, { Component } from 'react';
 import {
   Switch,
-  Route,
-  Link
+  Redirect,
+  Route
 } from 'react-router-dom';
-import Group from './GroupPage';
+import firebase from './firebase';
 
-import {createUrl} from './helperFunctions';
+import GroupPage from './GroupPage';
+import ManageUser from './ManageUser';
 
-const Home = () => (
-  <div>
-    <h1>Home</h1>
-  </div>
-);
+class App extends Component {
+  state = {
+    groupId: ''
+  }
 
-const About = () => (
-  <div>
-    <h1>About</h1>
-  </div>
-  )
+  _setGroupId = id => {
+    this.setState({groupId: id})
+    console.log(id)
+  }
 
-//let groupsUrl = createUrl();
-const App = () => {
-  return (
-    <div>
-      <Link to='/'>Home</Link>
-      <Link to={`/group`}>Group Page</Link>
-      <hr />
-      <Switch>
-        <Route exact path='/' component={Home} />
-        <Route path={`/group`} component={Group} />
-      </Switch>
-    </div>
-  )
-};
+  render(){
+    return (
+      <section>
+        <Switch>
+          <Route exact path='/' render={()=><ManageUser setGroupId={this._setGroupId}/>}/>
+          <Route path='/groups' render={()=><GroupPage groupId={this.state.groupId}/>}/>
+        </Switch>
+      </section>
+    )
+  }
+}
 
 export default App;
