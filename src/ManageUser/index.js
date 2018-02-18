@@ -41,7 +41,7 @@ class ManageUser extends Component {
     const { user, userInfo } = this.state;
     return (
      this.state.user 
-     ? <Admin logout={this._logOut} userId={user.uid} userInfo={userInfo}/> 
+     ? <Admin {...this.props} logout={this._logOut} userId={user.uid} userInfo={userInfo}/> 
      : <Login 
         toggleUserType={this._topggleUserType} />
     )

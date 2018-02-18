@@ -4,11 +4,16 @@ import Button from './Button';
 
 export default class GroupList extends Component {
 
-  _renderGroupItem = (listArray) => {
+  _goToGroupPage = () => {
+
+  }
+
+  _renderGroupItem = listArray => {
+    const {setGroupId} = this.props;
     if(listArray){
       return (
         <ul>
-          {listArray.map(item => <li key={item.groupId}> {item.groupName} {item.groupId} </li>)}
+          {listArray.map(item => <li key={item.groupId} onClick={()=>setGroupId(item.groupId)}> {item.groupName} {item.groupId} </li>)}
         </ul>
       )
     }
@@ -16,10 +21,9 @@ export default class GroupList extends Component {
 
   render(){
     const {myGroups} = this.props.userInfo;
-    const groupList = this._renderGroupItem(myGroups)
     return(
       <div>
-          {groupList}
+          {this._renderGroupItem(myGroups)}
       </div>
     )
   }

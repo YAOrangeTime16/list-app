@@ -11,7 +11,7 @@ export default class CreateGroup extends Component {
 
   _setValue = (e) => {
     e.preventDefault();
-    this.setState({[e.target.name]: e.target.value})
+    this.setState({[e.target.name]: e.target.value});
   }
   
   render(){

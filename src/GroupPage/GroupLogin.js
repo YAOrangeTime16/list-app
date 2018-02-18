@@ -17,7 +17,7 @@ class GroupLogin extends Component {
     this.setState({[e.target.name]: e.target.value})
   }
 
-  _login = (e) =>{
+  _anonymousLogin = (e) =>{
     e.preventDefault();
     const auth = firebase.auth();
     auth.signInAnonymously().catch(e=>console.log(e.message))
@@ -39,7 +39,7 @@ class GroupLogin extends Component {
         <form>
         <input id="gr-id" name="groupId" type="text" placeholder="Group ID" onChange={this._setValue} value={groupId} />
         <input id="gr-pw" name="groupPw" type="text" placeholder="Group Password" onChange={this._setValue} value={groupPw} />
-        <Button clickAction={user ? this._logout : this._login} title={user ? "Sign Out" : "Login to Group"} />
+        <Button clickAction={user ? this._logout : this._anonymousLogin} title={user ? "Sign Out" : "Login to Group"} />
         </form>
       </Route>
     )

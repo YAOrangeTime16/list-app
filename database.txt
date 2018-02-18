@@ -101,3 +101,14 @@ Chat
 
 Stack overflow: GroupList error
   https://stackoverflow.com/questions/24706267/cannot-read-property-map-of-undefined
+
+  ----- 2018-02-18 -----
+  "A Simple React Router v4 Tutorial" Paul Sherman, Mar 11, 2017, Medium
+  https://medium.com/@pshrmn/a-simple-react-router-v4-tutorial-7f23ff27adf
+  "A little bit of history", Paul Sherman, Medium, Mar 15, 2017
+  https://medium.com/@pshrmn/a-little-bit-of-history-f245306f48dd
+  "How to Store User Passwords and Overcome Security Threats in 2017", Andrei Neagoie, 23 December 2016
+  http://blog.rangle.io/how-to-store-user-passwords-and-overcome-security-threats-in-2017/
+
+  (tried bcrypt but didn't work really, so tried this on instead and works fine)
+  https://www.npmjs.com/package/bcryptjs

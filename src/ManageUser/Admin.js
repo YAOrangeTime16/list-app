@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import firebase from '../firebase';
+import bcrypt from 'bcryptjs';
 
 import Button from './Button';
 import CreateGroup from './CreateGroup';
@@ -31,12 +32,13 @@ export default class Admin extends Component {
 		const { userId } = this.state;
 		const { userInfo } = this.props;
 
+		const hash = bcrypt.hashSync(pw, 10);
 		const groupObject = {
 			groupName: name,
-			groupPass: pw,
+			groupPass: hash,
 			uid: userInfo.uid
 		}
-
+		
 		firebase.database().ref(`/groups`).push(groupObject)
 		.then(group=>{
 			//set groups url to the group object
@@ -71,7 +73,7 @@ export default class Admin extends Component {
 					? <CreateGroup addGroup={this._addGroup} resetModuleCall={this._resetModuleCall}/> 
 					: <Button clickAction={this._openAddGroup} title="Create Group" />
 				}
-				<GroupList userInfo={userInfo} />
+				<GroupList userInfo={userInfo} {...this.props} />
 				<Button clickAction={logout} title="Log out" />
 				</section>
 		)

@@ -1,20 +1,14 @@
 import React, { Component } from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Redirect,
-  withRouter
-} from "react-router-dom";
 import firebase from '../firebase'
 
 import Header from './Header';
 import GroupLogin from './GroupLogin';
+import GroupMain from './GroupMain';
 import PageMenu from './PageMenu';
 
 class GroupPage extends Component {
   state={
-    groupId: '',
+    groupId: 'tt',
     groupPw: '',
     user: null
   }
@@ -24,7 +18,7 @@ class GroupPage extends Component {
     this.setState({[e.target.name]: e.target.value})
   }
 
-  _login = (e) =>{
+  _groupLogin = (e) =>{
     e.preventDefault();
     const auth = firebase.auth();
     auth.signInAnonymously().catch(e=>console.log(e.message))
@@ -44,6 +38,7 @@ class GroupPage extends Component {
     <div>
       <Header groupName="My Group"/>
       <PageMenu flipTitle="our flip list" voteTitle="our vote list"/>
+      <GroupMain />
     </div>
    )
  }
