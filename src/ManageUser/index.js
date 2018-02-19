@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
 import firebase from '../firebase';
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Redirect,
+  withRouter
+} from "react-router-dom";
 
 import Admin from './Admin';
 import Login from './Login';
 
 class ManageUser extends Component {
+  /*
   state = {
     user: null,
     userInfo: ''
@@ -31,6 +39,7 @@ class ManageUser extends Component {
   componentDidMount(){
     this._checkUserLogin()
   }
+  */
 
   _logOut = () => {
     firebase.auth().signOut().catch(e=>console.log(e.message))
@@ -38,12 +47,12 @@ class ManageUser extends Component {
   }
 
   render(){
-    const { user, userInfo } = this.state;
+    const { user, userInfo } = this.props;
+    console.log(this.props.location)
     return (
-     this.state.user 
-     ? <Admin {...this.props} logout={this._logOut} userId={user.uid} userInfo={userInfo}/> 
-     : <Login 
-        toggleUserType={this._topggleUserType} />
+     userInfo 
+    ? <Admin {...this.props} logout={this._logOut} userId={user.uid} />
+    : <Login toggleUserType={this._topggleUserType} />
     )
   }
 }

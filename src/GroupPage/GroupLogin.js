@@ -1,15 +1,21 @@
 import React, {Component} from 'react'
-import firebase from '../firebase'
+import firebase from '../firebase';
+import bcrypt from 'bcryptjs';
 import {
-    Route
-  } from 'react-router-dom';
+  Link,
+  Route,
+  Redirect
+} from 'react-router-dom';
 import Button from '../ManageUser/Button';
+import GroupPage from './index';
+import ManageUser from '../ManageUser';
 
 class GroupLogin extends Component {
   state={
     groupId: '',
     groupPw: '',
-    user: null
+    user: null,
+    error: ''
   }
 
   _setValue = (e) => {
@@ -18,14 +24,30 @@ class GroupLogin extends Component {
   }
 
   _anonymousLogin = (e) =>{
+    const {groupPw, groupId} = this.state;
+    const {setGroupId, getGroupInfo} = this.props;
     e.preventDefault();
+    const groupRef = firebase.database().ref('/groups').child(groupId)
     const auth = firebase.auth();
-    auth.signInAnonymously().catch(e=>console.log(e.message))
-    auth.onAuthStateChanged(user => {
-      this.setState({user})
-      console.log(user);  
-    })
-  }
+
+    groupRef.on('value', snap=>{
+      if(snap.val() !==null){
+        const hash = snap.val().groupPass;
+        const passOk = bcrypt.compareSync(groupPw, hash);
+        if(passOk){
+          auth.signInAnonymously().catch(e=>console.log(e.message))
+          auth.onAuthStateChanged(user => {
+            this.setState({user})
+            getGroupInfo(groupId)
+          })
+        } else {
+          this.setState({error: 'Group Password is wrong'})
+        }
+      } else {
+      this.setState({error: 'There is no matching Group ID'})
+    }
+  })
+}
 
   _logout = () =>{
     const auth = firebase.auth();
@@ -33,16 +55,20 @@ class GroupLogin extends Component {
   }
 
   render(){
-    const {groupId, groupPw, user} = this.state;
-    return(
-      <Route path='/grouplogin'>
-        <form>
-        <input id="gr-id" name="groupId" type="text" placeholder="Group ID" onChange={this._setValue} value={groupId} />
-        <input id="gr-pw" name="groupPw" type="text" placeholder="Group Password" onChange={this._setValue} value={groupPw} />
-        <Button clickAction={user ? this._logout : this._anonymousLogin} title={user ? "Sign Out" : "Login to Group"} />
-        </form>
-      </Route>
-    )
+    const {error, groupId, groupPw, user} = this.state;
+    return (
+      user ? <Redirect to={{pathname: `/groups/${groupId}`}} render={props=><GroupPage {...props} uid={user.uid} />} />
+      : <div>
+          <Link to='/admin'>Are youAdmin?</Link>
+          <form>
+            <input id="gr-id" name="groupId" type="text" placeholder="Group ID" onChange={this._setValue} value={groupId} />
+            <input id="gr-pw" name="groupPw" type="text" placeholder="Group Password" onChange={this._setValue} value={groupPw} />
+            <Button clickAction={this._anonymousLogin} title="Login to Group" />
+          </form>
+          <div>{error}</div>
+          <Route path='/admin' component={ManageUser} />
+        </div>
+    )   
   }
 }
 

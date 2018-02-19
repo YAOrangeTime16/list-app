@@ -112,3 +112,11 @@ Stack overflow: GroupList error
 
   (tried bcrypt but didn't work really, so tried this on instead and works fine)
   https://www.npmjs.com/package/bcryptjs
+
+  ----- 2018-02-19 -----
+  "Instant Loading: Building offline-first Progressive Web Apps - Google I/O 2016"
+  YouTube: https://www.youtube.com/watch?v=cmGr0RszHc8
+
+  "Making a Progressive Web App"
+  https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#making-a-progressive-web-app
+

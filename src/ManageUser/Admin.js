@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import firebase from '../firebase';
 import bcrypt from 'bcryptjs';
+import {Redirect} from 'react-router-dom';
 
 import Button from './Button';
 import CreateGroup from './CreateGroup';

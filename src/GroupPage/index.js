@@ -1,32 +1,13 @@
 import React, { Component } from 'react';
-import firebase from '../firebase'
+import firebase from '../firebase';
+import './style.css';
 
 import Header from './Header';
 import GroupLogin from './GroupLogin';
 import GroupMain from './GroupMain';
 import PageMenu from './PageMenu';
 
-class GroupPage extends Component {
-  state={
-    groupId: 'tt',
-    groupPw: '',
-    user: null
-  }
-
-  _setValue = (e) => {
-    e.preventDefault();
-    this.setState({[e.target.name]: e.target.value})
-  }
-
-  _groupLogin = (e) =>{
-    e.preventDefault();
-    const auth = firebase.auth();
-    auth.signInAnonymously().catch(e=>console.log(e.message))
-    auth.onAuthStateChanged(user => {
-      this.setState({user})
-      console.log(user);  
-    })
-  }
+export default class GroupPage extends Component {
 
   _logout = () =>{
     const auth = firebase.auth();
@@ -34,9 +15,11 @@ class GroupPage extends Component {
   }
   
  render(){
+   const {groupName} = this.props;
+   console.log('goupPage: ' + this.props.match.params.id)
   return (
     <div>
-      <Header groupName="My Group"/>
+      <Header groupName={groupName}/>
       <PageMenu flipTitle="our flip list" voteTitle="our vote list"/>
       <GroupMain />
     </div>
@@ -44,10 +27,9 @@ class GroupPage extends Component {
  }
 }
 
-const GroupIdChecking = Component => (props) => {
-  return props.groupId ? <Component {...props}/> : <GroupLogin />
+const userChecking = Component => (props) => {
+  return props.uid ? <Component {...props}/> : <GroupLogin />
 }
+const GroupPageWithUserChecking = userChecking(GroupPage);
 
-const GroupPageWithGroupIdChecking = GroupIdChecking(GroupPage);
-
-export default GroupPageWithGroupIdChecking;
+GroupPageWithUserChecking;
