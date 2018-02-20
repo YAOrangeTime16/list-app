@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
 import firebase from '../firebase';
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Redirect,
-  withRouter
-} from "react-router-dom";
 
 import Admin from './Admin';
 import Login from './Login';
@@ -48,7 +41,6 @@ class ManageUser extends Component {
 
   render(){
     const { user, userInfo } = this.props;
-    console.log(this.props.location)
     return (
      userInfo 
     ? <Admin {...this.props} logout={this._logOut} userId={user.uid} />

@@ -1,21 +1,17 @@
 import React, {Component} from 'react';
-import firebase from '../firebase';
-import { Link, Route } from 'react-router-dom';
-import Button from './Button';
-import GroupPage from '../GroupPage';
+import { Link } from 'react-router-dom';
   
 export default class GroupList extends Component {
 
   _renderGroupItem = listArray => {
     const {getGroupInfo} = this.props;
-    const {uid} = this.props.userInfo;
     if(listArray){
       return (
         <ul>
-          {listArray.map(item => 
-            (<li key={item.groupId} onClick={()=>getGroupInfo(item.groupId)}>
-              <Link to={`/groups/${item.groupId}`} >
-                {item.groupName} {item.groupId}
+          {listArray.map(usersgroup => 
+            (<li key={usersgroup.groupId} onClick={()=>getGroupInfo(usersgroup.groupId)}>
+              <Link to={`/groups/${usersgroup.groupId}`} >
+                {usersgroup.groupName} {usersgroup.groupId}
               </Link>
             </li>)
           )}

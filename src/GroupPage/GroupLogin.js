@@ -6,7 +6,7 @@ import {
   Route,
   Redirect
 } from 'react-router-dom';
-import Button from '../ManageUser/Button';
+import Button from '../General/Button';
 import GroupPage from './index';
 import ManageUser from '../ManageUser';
 
@@ -25,7 +25,6 @@ class GroupLogin extends Component {
 
   _anonymousLogin = (e) =>{
     const {groupPw, groupId} = this.state;
-    const {setGroupId, getGroupInfo} = this.props;
     e.preventDefault();
     const groupRef = firebase.database().ref('/groups').child(groupId)
     const auth = firebase.auth();
@@ -38,7 +37,7 @@ class GroupLogin extends Component {
           auth.signInAnonymously().catch(e=>console.log(e.message))
           auth.onAuthStateChanged(user => {
             this.setState({user})
-            getGroupInfo(groupId)
+            //getGroupInfo(groupId)
           })
         } else {
           this.setState({error: 'Group Password is wrong'})

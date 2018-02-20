@@ -119,4 +119,8 @@ Stack overflow: GroupList error
 
   "Making a Progressive Web App"
   https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#making-a-progressive-web-app
-
+"React Router v4 Tutorial" Ben Awad, 2017/08/03
+https://www.youtube.com/watch?v=l9eyot_IXLY
+"React Router Version 4: Link Components", 
+CodeWithTim, 2017/11/20
+https://www.youtube.com/watch?v=2drsTBFZTQE

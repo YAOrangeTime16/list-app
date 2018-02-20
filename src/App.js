@@ -11,8 +11,6 @@ import ManageUser from './ManageUser';
 
 class App extends Component {
   state = {
-    groupId: '',
-    groupName: '',
     user: null,
     userInfo: ''
   }
@@ -39,26 +37,21 @@ class App extends Component {
     this._checkUserLogin()
   }
   //-------------------------------------
-
+/*
   _setGroupId = (id, userId) => {
     this.setState({groupId: id, uid: userId})
     console.log(id + ' ' + userId)
   }
-
-  _getGroupInfo = groupid => {
-    const groupRef = firebase.database().ref('/groups').child(groupid);
-    groupRef.once('value', snap => 
-    this.setState({groupId: snap.key, groupName: snap.val().groupName}))
-  }
+*/
+  
 
   render(){
-    const {groupName} = this.state;
     return (
       <section>
         <Switch>
-          <Route exact path='/' render={props=><GroupLogin {...props} getGroupInfo={this._getGroupInfo} /*setGroupId={this._setGroupId}*/ />}/>
-          <Route path='/admin' render={props=><ManageUser {...props} getGroupInfo={this._getGroupInfo} {...this.state}/> } />
-          <Route path='/groups/:id' render={props=><GroupPage {...props} getGroupInfo={this._getGroupInfo} groupName={groupName} /> } />
+          <Route exact path='/' render={props=><GroupLogin {...props}  /*setGroupId={this._setGroupId}*/ />}/>
+          <Route path='/admin' render={props=><ManageUser {...props} {...this.state}/> } />
+          <Route path='/groups/:id' render={props=><GroupPage {...props}  /> } />
         </Switch>
       </section>
     )

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import firebase from '../firebase'
 
-import Button from './Button';
+import Button from '../General/Button';
 
 class SignUp extends Component {
   state={
