@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import Button from '../General/Button';
 
 class ListItem extends Component {
   state = {
@@ -13,7 +12,7 @@ class ListItem extends Component {
   _renderItems = itemArray => itemArray.map(item => <li key={item.id}>{item.title}</li>)
 
   render(){
-    const {page, flipList} = this.props;
+    const {flipList} = this.props;
     const {addItem} = this.state;
     return (
       <div>

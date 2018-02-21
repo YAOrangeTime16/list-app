@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import firebase from '../firebase';
-import {Route} from 'react-router-dom';
 import Button from '../General/Button';
 
 class Login extends Component {
@@ -46,7 +45,6 @@ class Login extends Component {
 
   render(){
     const { email, password, errorMessage: error, newUser } = this.state;
-    const { toggleUserType } = this.props;
     return(
       <div>
         <form>

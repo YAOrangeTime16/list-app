@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 
 import Button from '../General/Button';
+import Header from './GroupHeader';
 import PageMenu from './PageMenu';
 import ListItem from './ListItem';
 
-export default class GroupMain extends Component {
+export default class Content extends Component {
   state={
     lists: true,
     flipList: [{id: '01', title: 'item1', status: false}, {id: '02', title: 'item2', status: false}],
@@ -13,7 +14,7 @@ export default class GroupMain extends Component {
 
   render(){
     const {flipList, lists} = this.state;
-    const {page} = this.props;
+    const {page, groupName, logout} = this.props;
     return(
       <div>
         <PageMenu {...this.props}/>

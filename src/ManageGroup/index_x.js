@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import firebase from '../firebase';
+import {Redirect, Route} from 'react-router-dom';
 import './style.css';
-
 import Header from './GroupHeader';
-import GroupLogin from './GroupLogin';
-import GroupMain from './GroupMain';
+import Content from './Content';
 
 export default class GroupPage extends Component {
   state = {
@@ -15,6 +14,7 @@ export default class GroupPage extends Component {
     groupIsOwnedBy: '',
     page: 'flip'
   }
+
   _checkIfUserIsLoggedIn = () => {
     firebase.auth().onAuthStateChanged(user=>{
       if(user.isAnonymous){
@@ -54,34 +54,25 @@ export default class GroupPage extends Component {
   }
 
   componentDidMount(){
-    this._checkIfUserIsLoggedIn()
+    //this._checkIfUserIsLoggedIn()
     this._getGroupInfo(this.props.match.params.id)
-    this._getGroupList()
-  }
-
-  _logout = () =>{
-    const auth = firebase.auth();
-    auth.signOut().then(()=>console.log('logged out')).catch(e=>console.log(e.message))
+    //this._getGroupList()
   }
   
  render(){
    const {groupId, groupName, flipList, page} = this.state;
-  return (
-    <div>
-      <Header groupName={groupName}/>
-      <GroupMain
-        {...this.props}
+   const {logout} = this.props;
+   return(
+     <div>
+      <Header groupName={groupName} logout={logout}/>
+      <Content {...this.props}
         flipTitle="our flip list"
         voteTitle="our vote list"
         page={page}
         groupId={groupId}
-        flipList={flipList} />
+        flipList={flipList}
+         />
     </div>
-   )
+  )
  }
 }
-
-const userChecking = Component => (props) => {
-  return props.uid ? <Component {...props}/> : <GroupLogin />
-}
-const GroupPageWithUserChecking = userChecking(GroupPage);

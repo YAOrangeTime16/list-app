@@ -1,60 +1,79 @@
 import React, { Component } from 'react';
 import {
   Switch,
+  Redirect,
   Route
 } from 'react-router-dom';
 import firebase from './firebase';
 
-import GroupPage from './GroupPage';
-import GroupLogin from './GroupPage/GroupLogin';
+import ManageGroup from './ManageGroup';
+import GroupPage from './ManageGroup/GroupPage';
 import ManageUser from './ManageUser';
 
 class App extends Component {
   state = {
-    user: null,
-    userInfo: ''
+    user: false,
+    loggedInAs: '',
+    userInfo: '',
+    groupId:''
   }
   //---- ComponentDidMount -----------
   _checkUserLogin = () => {
     firebase.auth().onAuthStateChanged( user => {
       if(user){
-        this.setState({user})
-        this._getThisUsersInfo()
-      } else {
-        return false
+        this._getThisUsersInfo(user.uid)
+        this.setState({user: true})
+        if(user.isAnonymous){
+          this.setState({loggedInAs: 'anonymous'})
+        } else {
+          this.setState({loggedInAs: 'admin'})
+        }
       }
+      return false
     })
+    return false
   }
 
-  _getThisUsersInfo = () => {
-		const {user} = this.state;
-		firebase.database().ref(`/users/${user.uid}`).on('value', user=>{	
-			this.setState({userInfo: user.val()})
-		})
-	}
+  _setUserState = user => {
+    this.setState({user})
+  }
+
+  _getThisUsersInfo = userid => {
+    if(userid){
+      firebase.database().ref(`/users/${userid}`).on('value', info=>
+        this.setState({userInfo: info.val()})
+      )
+    }
+  }
   
   componentDidMount(){
     this._checkUserLogin()
   }
   //-------------------------------------
-/*
-  _setGroupId = (id, userId) => {
-    this.setState({groupId: id, uid: userId})
-    console.log(id + ' ' + userId)
-  }
-*/
-  
+
+_logout = () =>{
+  const auth = firebase.auth();
+  auth.signOut()
+  .then(()=>{
+    this.setState( {user: null, userInfo: ''} )
+  })
+  .catch(e=>console.log(e.message))
+}
 
   render(){
+    const {groupId, user} = this.state;
     return (
       <section>
         <Switch>
-          <Route exact path='/' render={props=><GroupLogin {...props}  /*setGroupId={this._setGroupId}*/ />}/>
-          <Route path='/admin' render={props=><ManageUser {...props} {...this.state}/> } />
-          <Route path='/groups/:id' render={props=><GroupPage {...props}  /> } />
+          <Route exact path='/' render={()=><ManageGroup {...this.state} setUserState={this._setStateOfUser}/>} />
+          <Route path='/groups/:id' component={GroupPage} />
+          <Route path='/admin' render={()=><ManageUser {...this.state} logout={this._logout}/>} />
         </Switch>
       </section>
     )
   }
 }
+
+const Home = () => <div>Home</div>
+
 export default App;

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import firebase from '../firebase';
 
 import Button from '../General/Button';
 
@@ -16,7 +15,7 @@ export default class CreateGroup extends Component {
   
   render(){
     const {groupName, groupPassword} = this.state;
-    const {addGroup, error, resetModuleCall} = this.props;
+    const {addGroup, resetModuleCall} = this.props;
     return(
       <form>
         <input name="groupName" value={groupName} onChange={this._setValue} type="text" placeholder="Group Name" />
