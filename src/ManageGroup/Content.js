@@ -14,7 +14,7 @@ export default class Content extends Component {
 
   render(){
     const {flipList, lists} = this.state;
-    const {page, groupName, logout} = this.props;
+    const {page, groupName, logout, groupInfo} = this.props;
     return(
       <div>
         <PageMenu {...this.props}/>

@@ -1,9 +1,9 @@
 import React from 'react';
 import Button from '../General/Button';
 
-const Header = ({logoutGroup, history}) => (
+const Header = ({logoutGroup, groupName, history}) => (
   <div>
-    <h1>groupName</h1>
+    <h1>{groupName}</h1>
     <Button clickAction={()=>logoutGroup(()=>history.replace('/'))} title="logout from group" />
   </div>
 )
