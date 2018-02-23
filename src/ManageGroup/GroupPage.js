@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import Header from './GroupHeader';
+import {Link} from 'react-router-dom';
+import Header from './Header';
 import Content from './Content';
-const GroupPage = ({groupName, logout}) => (
+
+const GroupPage = ({logoutGroup, loggedinAdmin, history}) => (
   <div>
-    <Header groupName={groupName} logout={logout}/>
+    <Header history={history} logoutGroup={logoutGroup}/>
     <Content />
+    <Link to='/admin'>{ loggedinAdmin ? 'Admin Panel' : 'Login as Admin?'}</Link>
   </div>
 )
 

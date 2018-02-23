@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 
 import Button from '../General/Button';
-import Header from './GroupHeader';
+import Header from './Header';
 import PageMenu from './PageMenu';
 import ListItem from './ListItem';
 

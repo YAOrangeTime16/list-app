@@ -15,22 +15,19 @@ export default class CreateGroup extends Component {
   
   render(){
     const {groupName, groupPassword} = this.state;
-    const {addGroup, resetModuleCall} = this.props;
+    const {addGroup, cancelCreatePage} = this.props;
     return(
-      <form>
+      <form onSubmit={e=>e.preventDefault()}>
         <input name="groupName" value={groupName} onChange={this._setValue} type="text" placeholder="Group Name" />
         <input name="groupPassword" value={groupPassword} onChange={this._setValue} type="password" placeholder="Group Password" />
         <Button
-          clickAction={e=>{
-            e.preventDefault()
-            resetModuleCall()
-          }}
+          clickAction={cancelCreatePage}
           title="Cancel"/>
         <Button 
-          clickAction={e =>{
-            e.preventDefault();
-            resetModuleCall()
-            addGroup(groupName, groupPassword)}} 
+          clickAction={ ()=>{
+            addGroup(groupName, groupPassword)
+            cancelCreatePage()
+          } }
           title="Add This Group" />
       </form>
     )

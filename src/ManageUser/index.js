@@ -1,17 +1,26 @@
 import React, { Component } from 'react';
 import {Redirect, Route, Switch} from 'react-router-dom';
+import firebase from '../firebase';
 import Admin from './Admin';
 import Login from './Login';
 
 class ManageUser extends Component {
+  state = {
+  }
+  
+  componentDidMount(){
+    
+  }
+
   render(){
-    const { user, userInfo, logout } = this.props;
+    const {groupId, logoutAdmin, loggedinAdmin, loggedInAs, groups, history} = this.props;
     return (
       <div>
-        {!userInfo 
+        { !loggedinAdmin 
             ? <Login />
             : (<div>
-                <Admin user={user} userInfo={userInfo} logout={logout}/>
+                <Admin {...this.props} groupId={groupId} groups={groups}/>
+                <button onClick={()=>logoutAdmin(()=>history.replace('/admin'))}>Logout from Admin</button>
               </div>)
         }
       </div>

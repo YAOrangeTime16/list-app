@@ -5,6 +5,7 @@ import {
   Route
 } from 'react-router-dom';
 import firebase from './firebase';
+import bcrypt from 'bcryptjs';
 
 import ManageGroup from './ManageGroup';
 import GroupPage from './ManageGroup/GroupPage';
@@ -12,62 +13,125 @@ import ManageUser from './ManageUser';
 
 class App extends Component {
   state = {
-    user: false,
+    loggedinAdmin: false,
+    loggedinGroup: false,
     loggedInAs: '',
-    userInfo: '',
-    groupId:''
+    error: '',
+    uid: '',
+    userName: '',
+    groups: [],
+    groupId: ''
   }
+
   //---- ComponentDidMount -----------
-  _checkUserLogin = () => {
-    firebase.auth().onAuthStateChanged( user => {
+
+  _checkUserLoggedInAs = ()=> {
+    const auth = firebase.auth()
+    auth.onAuthStateChanged(user=>{
       if(user){
-        this._getThisUsersInfo(user.uid)
-        this.setState({user: true})
         if(user.isAnonymous){
-          this.setState({loggedInAs: 'anonymous'})
+          return this.setState({loggedInAs: 'member'})
         } else {
-          this.setState({loggedInAs: 'admin'})
+          this._getGroupIdsOfThisAdmin(user.uid)
+          return this.setState({loggedInAs: 'admin', loggedinAdmin: true, uid: user.uid, userName: user.displayName || user.email })
         }
       }
       return false
     })
-    return false
   }
 
-  _setUserState = user => {
-    this.setState({user})
+  _getGroupIdsOfThisAdmin = uid => {
+		const groupsRef = firebase.database().ref(`/users/${uid}/myGroups`)
+		groupsRef.on('value', snap => this.setState({groups: snap.val()}))
   }
 
-  _getThisUsersInfo = userid => {
-    if(userid){
-      firebase.database().ref(`/users/${userid}`).on('value', info=>
-        this.setState({userInfo: info.val()})
-      )
-    }
-  }
-  
   componentDidMount(){
-    this._checkUserLogin()
+    this._checkUserLoggedInAs()
+    this.setState({error: ''})
   }
   //-------------------------------------
 
-_logout = () =>{
-  const auth = firebase.auth();
-  auth.signOut()
-  .then(()=>{
-    this.setState( {user: null, userInfo: ''} )
-  })
-  .catch(e=>console.log(e.message))
-}
+  _addGroup = (name, pw) => {
+		const { uid, groups } = this.state;
+    if (!name || !pw){
+      this.setState({error: 'please fill in'})
+    } else {
+      const hash = bcrypt.hashSync(pw, 10);
+      const groupObject = {
+        groupName: name,
+        groupPass: hash,
+        uid: uid
+      }
+      console.log(groupObject)
+
+		firebase.database().ref(`/groups`).push(groupObject)
+		.then(group=>{
+			//set groups url to the group object
+			firebase.database().ref(`/groups`).child(`/${group.key}`).update({groupUrl: group.key})
+			//set groups id under the user info
+			const userRef = firebase.database().ref(`/users/${uid}`);
+			if(groups){
+				const updatedGroups = [...groups, {groupName: name, groupId: group.key}];
+				//const updatedUserInfo = Object.assign(userInfo, {myGroups: updatedGroups} )
+        userRef.update({myGroups: updatedGroups})
+        //this.setState({groups: updatedGroups})
+			} else {
+        userRef.update({myGroups: [{groupName: name, groupId: group.key}]})
+        //this.setState({groups: [{groupName: name, groupId: group.key}]})
+			}
+    })
+    }
+	}
+
+
+  _loginGroup = (password, groupID) => {
+    const groupRef = firebase.database().ref(`/groups/${groupID}`);
+    groupRef.once('value', group => {
+      if(group.val() === null){
+        this.setState({error: 'There is no such a group'})
+        return false
+      } else {
+        const hash = group.val().groupPass;
+        const passOK = bcrypt.compareSync(password, hash)
+        if(!passOK){
+          this.setState({error: 'Password is wrong'}) 
+        } else {
+          firebase.auth().signInAnonymously().catch(e=>this.setState({error: e.message}))
+          this.setState({loggedinGroup: true, loggedInAs: 'member', groupId: groupID})
+        } 
+      }
+    })
+  }
+  
+  _logoutAdmin = (cb) => {
+    firebase.auth().signOut()
+    .then(()=>{
+      this.setState({
+        loggedinAdmin: false,
+        loggedinGroup: false,
+        loggedInAs: '',
+        groups: [],
+        groupId: '',
+        userName: '',
+        uid: ''})
+      cb()
+    })
+    .catch(e=>this.setState({error: e.message}))
+  }
+
+  _logoutGroup = (cb) =>{
+    this.setState({loggedinGroup: false, loggedInAs: '', groupId: ''})
+    cb()
+  }
 
   render(){
-    const {groupId, user} = this.state;
+    const {groupId, loggedinAdmin} = this.state;
     return (
       <section>
         <Switch>
-          <Route exact path='/' render={()=><ManageGroup {...this.state} setUserState={this._setStateOfUser}/>} />
-          <Route path='/groups/:id' component={GroupPage} />
-          <Route path='/admin' render={()=><ManageUser {...this.state} logout={this._logout}/>} />
+          <Route exact path='/' render={()=><ManageGroup {...this.state} loginGroup={this._loginGroup} error={this.state.error}/>} />
+          <Route path='/groups/:id' render={(props)=><GroupPage {...props} logoutGroup={this._logoutGroup} groupId={groupId} loggedinAdmin={loggedinAdmin}/>} />
+          <Route path='/admin' render={(props)=><ManageUser {...props} {...this.state} logoutAdmin={this._logoutAdmin} singupAdmin={this._signupAdmin} addGroup={this._addGroup}/>} />
         </Switch>
       </section>
     )
