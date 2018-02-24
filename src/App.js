@@ -13,14 +13,16 @@ import ManageUser from './ManageUser';
 
 class App extends Component {
   state = {
-    loggedinAdmin: false,
-    loggedinGroup: false,
-    loggedInAs: '',
+    loggedinAsAdmin: false,
+    loggedinAsMember: false,
+    userBelongsToThisGroupAs: '',
     error: '',
     uid: '',
     userName: '',
     groups: [],
-    groupId: ''
+    groupId: '',
+    listFlipID: '',
+    listVoteID: ''
   }
 
   //---- ComponentDidMount -----------
@@ -30,10 +32,15 @@ class App extends Component {
     auth.onAuthStateChanged(user=>{
       if(user){
         if(user.isAnonymous){
-          return this.setState({loggedInAs: 'member'})
+          return this.setState({userBelongsToThisGroupAs: 'member'})
         } else {
           this._getGroupIdsOfThisAdmin(user.uid)
-          return this.setState({loggedInAs: 'admin', loggedinAdmin: true, uid: user.uid, userName: user.displayName || user.email })
+          return this.setState({
+            userBelongsToThisGroupAs: 'admin',
+            loggedinAsAdmin: true,
+            loggedinAsMember: false,
+            uid: user.uid,
+            userName: user.displayName || user.email })
         }
       }
       return false
@@ -44,6 +51,7 @@ class App extends Component {
 		const groupsRef = firebase.database().ref(`/users/${uid}/myGroups`)
 		groupsRef.on('value', snap => this.setState({groups: snap.val()}))
   }
+  
 
   componentDidMount(){
     this._checkUserLoggedInAs()
@@ -85,22 +93,37 @@ class App extends Component {
     }
   }
   
-  _addFlipList = (groupID, name) => {
+  _addList = (groupID, name, text, item1, item2, type) => {
     const {uid, groups} = this.state
     const listObject = {
       label: name,
-      items: [],
+      description: text,
+      items: [
+        {name: item1, status: false, id: groupID + 'i1'},
+        {name: item2, status: false, id: groupID + 'i2'}],
       groupId: groupID
     }
-    console.log(listObject)
-
-    firebase.database().ref(`/flipLists`).push(listObject)
+    if(type==='flip'){
+      firebase.database().ref(`/flipLists`).push(listObject)
+      .then(list=>{
+        firebase.database().ref(`/groups/${groupID}`).update({listFlipID: list.key})
+        this.setState({listFlipID: list.key})
+      })
+      .catch(e=>console.log(e.message))
+    } else if(type==='vote'){
+      firebase.database().ref(`/voteLists`).push(listObject)
 		.then(list=>{
-      firebase.database().ref(`/groups/${groupID}`).update({listFlipID: list.key})
+      firebase.database().ref(`/groups/${groupID}`).update({listVoteID: list.key})
+      this.setState({listVoteID: list.key})
     })
     .catch(e=>console.log(e.message))
+    }
+    
   }
 
+  _getGroupId = (id) => {
+    this.setState({groupId: id})
+  }
 
   _loginGroup = (password, groupID) => {
     const groupRef = firebase.database().ref(`/groups/${groupID}`);
@@ -115,7 +138,7 @@ class App extends Component {
           this.setState({error: 'Password is wrong'}) 
         } else {
           firebase.auth().signInAnonymously().catch(e=>this.setState({error: e.message}))
-          this.setState({loggedinGroup: true, loggedInAs: 'member', groupId: groupID, error: ''})
+          this.setState({loggedinAsMember: true, userBelongsToThisGroupAs: 'member', groupId: groupID, error: ''})
         } 
       }
     })
@@ -125,9 +148,9 @@ class App extends Component {
     firebase.auth().signOut()
     .then(()=>{
       this.setState({
-        loggedinAdmin: false,
-        loggedinGroup: false,
-        loggedInAs: '',
+        loggedinAsAdmin: false,
+        loggedinAsMember: false,
+        userBelongsToThisGroupAs: '',
         groups: [],
         groupId: '',
         userName: '',
@@ -138,18 +161,31 @@ class App extends Component {
   }
 
   _logoutGroup = (cb) =>{
-    this.setState({loggedinGroup: false, loggedInAs: '', groupId: ''})
+    firebase.auth().signOut()
+    this.setState({
+      groups: [],
+      loggedinAsAdmin: '',
+      loggedinAsMember: '',
+      userBelongsToThisGroupAs: '',
+      uid: '',
+      userName: '',
+      groupId: ''})
     cb()
   }
 
   render(){
-    const {groupId, loggedinAdmin} = this.state;
     return (
       <section>
         <Switch>
           <Route exact path='/' render={()=><ManageGroup {...this.state} loginGroup={this._loginGroup} error={this.state.error}/>} />
-          <Route path='/groups/:id' render={(props)=><GroupPage {...props} logoutGroup={this._logoutGroup} groupId={groupId} loggedinAdmin={loggedinAdmin}/>} />
-          <Route path='/admin' render={(props)=><ManageUser {...props} {...this.state} logoutAdmin={this._logoutAdmin} singupAdmin={this._signupAdmin} addGroup={this._addGroup} addFlipList={this._addFlipList}/>} />
+          <Route path='/groups/:id' render={(props)=><GroupPage {...this.state} {...props} logoutGroup={this._logoutGroup}  addList={this._addList}/>} />
+          <Route path='/admin' render={(props)=>
+                    <ManageUser {...props} {...this.state}
+                        logoutAdmin={this._logoutAdmin}
+                        singupAdmin={this._signupAdmin}
+                        addGroup={this._addGroup}
+                        getGroupId={this._getGroupId} />
+                  } />
         </Switch>
       </section>
     )

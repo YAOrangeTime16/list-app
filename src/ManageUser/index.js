@@ -13,10 +13,10 @@ class ManageUser extends Component {
   }
 
   render(){
-    const {groupId, logoutAdmin, loggedinAdmin, loggedInAs, groups, history} = this.props;
+    const {groupId, logoutAdmin, loggedinAsAdmin, loggedInAs, groups, history} = this.props;
     return (
       <div>
-        { !loggedinAdmin 
+        { !loggedinAsAdmin 
             ? <Login />
             : (<div>
                 <Admin {...this.props} groupId={groupId} groups={groups}/>

@@ -18,9 +18,10 @@ export default class Admin extends Component {
 	_cancelCreatePage = () => this.setState({createGroup: false})
 	
 	_renderGroupList = groupArray => {
+		const {getGroupId} = this.props;
 			if(groupArray){
 				return groupArray.map( group => (
-					<li key={group.groupId}>
+					<li key={group.groupId} onClick={()=>getGroupId(group.groupId)}>
 							<Link to={{
 										pathname: '/groups/admin',
 										search: `?groupID=${group.groupId}`,

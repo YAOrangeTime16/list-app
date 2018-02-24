@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-
+import firebase from '../firebase';
 import Button from '../General/Button';
 import Header from './Header';
 import PageMenu from './PageMenu';
@@ -7,21 +7,20 @@ import ListItem from './ListItem';
 
 export default class Content extends Component {
   state={
-    lists: true,
-    flipList: [{id: '01', title: 'item1', status: false}, {id: '02', title: 'item2', status: false}],
-    voteList: []
   }
 
-
+  componentDidMount(){
+    
+  }
 
   _showList = contentToShow => {
     switch(contentToShow){
       case 'flip':
-      return <div>flip list</div>
+      return <ListItem {...this.props} {...this.state} type={'flip'}/>
       break;
 
       case 'vote':
-      return <div>vote list</div>
+      return <ListItem {...this.props} {...this.state} type={'vote'} />
       break;
 
       case 'message':
@@ -38,16 +37,6 @@ export default class Content extends Component {
         <PageMenu {...this.props}/>
         <p>Group Main Content</p>
         {this._showList(this.props.contentToShow)}
-        { lists 
-          ? <ListItem
-              {...this.props}
-              flipList={this.state.flipList}
-              voteList={this.state.voteList} />
-          : <Button
-              clickAction=''
-              title={ page==='flip' ? "List-Flip" : page==='vote' && "List-Vote" } />
-        }
-      
       </div>
     )
   }
