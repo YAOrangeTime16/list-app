@@ -60,7 +60,9 @@ class App extends Component {
       const groupObject = {
         groupName: name,
         groupPass: hash,
-        uid: uid
+        uid: uid,
+        listFlipID: '',
+        listVoteID: ''
       }
       console.log(groupObject)
 
@@ -81,7 +83,23 @@ class App extends Component {
 			}
     })
     }
-	}
+  }
+  
+  _addFlipList = (groupID, name) => {
+    const {uid, groups} = this.state
+    const listObject = {
+      label: name,
+      items: [],
+      groupId: groupID
+    }
+    console.log(listObject)
+
+    firebase.database().ref(`/flipLists`).push(listObject)
+		.then(list=>{
+      firebase.database().ref(`/groups/${groupID}`).update({listFlipID: list.key})
+    })
+    .catch(e=>console.log(e.message))
+  }
 
 
   _loginGroup = (password, groupID) => {
@@ -97,7 +115,7 @@ class App extends Component {
           this.setState({error: 'Password is wrong'}) 
         } else {
           firebase.auth().signInAnonymously().catch(e=>this.setState({error: e.message}))
-          this.setState({loggedinGroup: true, loggedInAs: 'member', groupId: groupID})
+          this.setState({loggedinGroup: true, loggedInAs: 'member', groupId: groupID, error: ''})
         } 
       }
     })
@@ -131,7 +149,7 @@ class App extends Component {
         <Switch>
           <Route exact path='/' render={()=><ManageGroup {...this.state} loginGroup={this._loginGroup} error={this.state.error}/>} />
           <Route path='/groups/:id' render={(props)=><GroupPage {...props} logoutGroup={this._logoutGroup} groupId={groupId} loggedinAdmin={loggedinAdmin}/>} />
-          <Route path='/admin' render={(props)=><ManageUser {...props} {...this.state} logoutAdmin={this._logoutAdmin} singupAdmin={this._signupAdmin} addGroup={this._addGroup}/>} />
+          <Route path='/admin' render={(props)=><ManageUser {...props} {...this.state} logoutAdmin={this._logoutAdmin} singupAdmin={this._signupAdmin} addGroup={this._addGroup} addFlipList={this._addFlipList}/>} />
         </Switch>
       </section>
     )

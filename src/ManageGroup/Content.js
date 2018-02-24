@@ -12,13 +12,32 @@ export default class Content extends Component {
     voteList: []
   }
 
+
+
+  _showList = contentToShow => {
+    switch(contentToShow){
+      case 'flip':
+      return <div>flip list</div>
+      break;
+
+      case 'vote':
+      return <div>vote list</div>
+      break;
+
+      case 'message':
+      return <div>message</div>
+      break;
+    }
+  }
+
   render(){
     const {flipList, lists} = this.state;
-    const {page, groupName, logout, groupInfo} = this.props;
+    const {createList, page, groupName, logout, groupInfo} = this.props;
     return(
       <div>
         <PageMenu {...this.props}/>
         <p>Group Main Content</p>
+        {this._showList(this.props.contentToShow)}
         { lists 
           ? <ListItem
               {...this.props}

@@ -16,11 +16,11 @@ export default class ManageGroup extends Component {
   }
 
  render(){
-   const {groupId, logoutGroup, loginGroup, loggedinGroup, loggedInAs, error} = this.props;
+   const {groupId,loginGroup, loggedinGroup, error} = this.props;
   return (
     <div>
       {
-        (loggedInAs !== '') ? <Redirect to={`/groups/${groupId}`} />
+        (loggedinGroup) ? <Redirect to={`/groups/${groupId}`} />
         : <GroupLogin error={error} loginGroup={loginGroup} />
       }
     </div>

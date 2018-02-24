@@ -6,7 +6,9 @@ import Content from './Content';
 
 class GroupPage extends Component {
   state={
-    groupInfo: ''
+    groupInfo: '',
+    contentToShow: 'flip',
+    existFlip: false
   }
 
   _getGroupInfo = ()=>{
@@ -14,14 +16,16 @@ class GroupPage extends Component {
     const theGroupsID = (location.search) ? location.search.substr(9) : match.params.id;
     if(theGroupsID){
       const groupRef = firebase.database().ref(`/groups/${theGroupsID}`)
-      groupRef.once('value', info=> this.setState({groupInfo: info.val()}))
+      groupRef.once('value', info=> this.setState({groupInfo: info.val()}) )
     }
   }
 
-  //Function for adding lists
-
   componentDidMount(){
     this._getGroupInfo()
+  }
+
+  _clickMenu = (e) => {
+    this.setState({contentToShow: e.target.name})
   }
 
   render(){
@@ -29,8 +33,8 @@ class GroupPage extends Component {
     const {logoutGroup, loggedinAdmin, location, history} = this.props
     return(
       <div>
-        <Header history={history} logoutGroup={logoutGroup} groupName={groupInfo.groupName}/>
-        <Content groupInfo={groupInfo}/>
+        <Header history={history} logoutGroup={logoutGroup} />
+        <Content {...this.state} clickMenu={this._clickMenu} createList={this._createList} />
         <Link to='/admin'>{ loggedinAdmin ? 'Admin Panel' : 'Login as Admin?'}</Link>
       </div>
     )

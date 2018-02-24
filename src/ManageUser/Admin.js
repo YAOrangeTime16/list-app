@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import firebase from '../firebase';
 import bcrypt from 'bcryptjs';
-import {Link} from 'react-router-dom';
+import {Link, NavLink} from 'react-router-dom';
 
 import Button from '../General/Button';
 import CreateGroup from './CreateGroup';
 import GroupList from './GroupList';
+import CreateList from './CreateList';
 
 export default class Admin extends Component {
 
@@ -14,21 +15,20 @@ export default class Admin extends Component {
 	}
 
 	_openCreatePage = () => this.setState({createGroup: true})
-
 	_cancelCreatePage = () => this.setState({createGroup: false})
-
+	
 	_renderGroupList = groupArray => {
 			if(groupArray){
 				return groupArray.map( group => (
 					<li key={group.groupId}>
-						<Link to={{
-									pathname: '/groups/admin',
-									search: `?groupID=${group.groupId}`,
-									state: { loggedinGroup: true }
-								}}
-						>
-						{group.groupName}
-						</Link>
+							<Link to={{
+										pathname: '/groups/admin',
+										search: `?groupID=${group.groupId}`,
+										state: { loggedinGroup: true }
+									}}
+							>
+							{group.groupName}
+							</Link>
 					</li>
 					)
 				)
@@ -37,7 +37,7 @@ export default class Admin extends Component {
 
 	render(){
 		const {createGroup} = this.state;
-		const {addGroup, groupId, uid, groups, groupName, userName} = this.props;
+		const {addGroup, groupId, uid, location, groups, groupName, userName, addFlipList} = this.props;
 		return (
 			<div>
 				<h1>{userName}</h1>
@@ -45,12 +45,11 @@ export default class Admin extends Component {
 					? <CreateGroup cancelCreatePage={this._cancelCreatePage} addGroup={addGroup}/>
 					: (	
 						<div>
-						<Button clickAction={this._openCreatePage} title='Create New Group'/>
-						<ul>{ this._renderGroupList(groups) }</ul>
+							<Button clickAction={this._openCreatePage} title='Create New Group'/>
+							<ul>{ this._renderGroupList(groups) }</ul>
 						</div>
 						)
 				}
-				
 			</div>
 		)
 	}

@@ -1,12 +1,12 @@
 import React from 'react';
 import {NavLink} from 'react-router-dom';
 
-const PageMenu = ({flipTitle, voteTitle}) => (
+const PageMenu = ({clickMenu, existFlip, flipTitle, voteTitle}) => (
   <nav>
     <ul>
-      <li><NavLink to={{ hash:'#flip'}}>{flipTitle}</NavLink></li>
-      <li><NavLink to={{ hash:'#vote'}}>{voteTitle}</NavLink></li>
-      <li>Message</li>
+<li onClick={clickMenu}>{existFlip ? <NavLink to={{ hash:'#flip'}} name='flip'>Flip</NavLink> : "Flip" }</li>
+      <li onClick={clickMenu}><NavLink to={{ hash:'#vote'}} name='vote'>Vote</NavLink></li>
+      <li onClick={clickMenu}><NavLink to={{ hash:'#vote'}} name='message'>Message</NavLink></li>
     </ul>
   </nav>
 )

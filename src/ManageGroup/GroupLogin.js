@@ -20,7 +20,7 @@ class GroupLogin extends Component {
           <Link to='/admin'>Are youAdmin?</Link>
           <form onSubmit={e=>e.preventDefault()}>
             <input id="gr-id" name="authGroupId" type="text" placeholder="Group ID" onChange={this._setState} value={authGroupId} />
-            <input id="gr-pw" name="authGroupPw" type="text" placeholder="Group Password" onChange={this._setState} value={authGroupPw} />
+            <input id="gr-pw" name="authGroupPw" type="password" placeholder="Group Password" onChange={this._setState} value={authGroupPw} />
             <Button clickAction={()=>loginGroup(authGroupPw, authGroupId)} title="Login To Group" />
           </form>
           <div>{error}</div>
