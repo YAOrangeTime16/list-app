@@ -3,6 +3,8 @@ import {Redirect, Route, Switch} from 'react-router-dom';
 import firebase from '../firebase';
 import Admin from './Admin';
 import Login from './Login';
+import './manageUser.css';
+import '../General/Button.css';
 
 class ManageUser extends Component {
   state = {
@@ -15,7 +17,7 @@ class ManageUser extends Component {
   render(){
     const {groupId, logoutAdmin, loggedinAsAdmin, loggedInAs, groups, history} = this.props;
     return (
-      <div>
+      <div className="manageuser-container">
         { !loggedinAsAdmin 
             ? <Login />
             : (<div>

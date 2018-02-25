@@ -1,0 +1,25 @@
+.admin-grouplist {
+  display: block;
+  height: 3rem;
+  width: 100%;
+  font-size: 1.8em;
+  border-bottom: solid .5px #8492A6;
+}
+
+.admin-grouplist > a {
+  display: block;
+  text-decoration: none;
+  line-height: 3rem;
+  padding-left: 1rem;
+  width: 90%;
+}
+
+.manageuser-container {
+  margin: 0 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.manageuser-container > div {
+  width: 100%;
+}

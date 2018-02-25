@@ -5,3 +5,8 @@ body {
   width: 100vw;
   margin: 0;
 }
+
+h1, h2, h3 {
+  font-family: "Lato", Helvetica, sans-serif, Arial;
+  font-weight: 100;
+}

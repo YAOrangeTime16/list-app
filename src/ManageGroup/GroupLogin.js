@@ -21,7 +21,7 @@ class GroupLogin extends Component {
           <form onSubmit={e=>e.preventDefault()}>
             <input id="gr-id" name="authGroupId" type="text" placeholder="Group ID" onChange={this._setState} value={authGroupId} />
             <input id="gr-pw" name="authGroupPw" type="password" placeholder="Group Password" onChange={this._setState} value={authGroupPw} />
-            <Button clickAction={()=>loginGroup(authGroupPw, authGroupId)} title="Login To Group" />
+            <Button clickAction={()=>loginGroup(authGroupPw, authGroupId)} title="Login To Group" classname="btn-primary" />
           </form>
           <div>{error}</div>
       </div>

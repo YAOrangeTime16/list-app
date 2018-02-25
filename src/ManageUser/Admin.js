@@ -21,7 +21,7 @@ export default class Admin extends Component {
 		const {getGroupId} = this.props;
 			if(groupArray){
 				return groupArray.map( group => (
-					<li key={group.groupId} onClick={()=>getGroupId(group.groupId)}>
+					<li className="admin-grouplist" key={group.groupId} onClick={()=>getGroupId(group.groupId)}>
 							<Link to={{
 										pathname: '/groups/admin',
 										search: `?groupID=${group.groupId}`,
@@ -46,7 +46,7 @@ export default class Admin extends Component {
 					? <CreateGroup cancelCreatePage={this._cancelCreatePage} addGroup={addGroup}/>
 					: (	
 						<div>
-							<Button clickAction={this._openCreatePage} title='Create New Group'/>
+							<Button clickAction={this._openCreatePage} title='+ Create New Group' classname="btn-primary" />
 							<ul>{ this._renderGroupList(groups) }</ul>
 						</div>
 						)

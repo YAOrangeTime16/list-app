@@ -1,0 +1,17 @@
+button {
+  border: none;
+  padding: .5rem 1rem;
+  border-radius: 3px;
+  font-family: "Lato", Helvetica, sans-serif, Arial;
+}
+
+
+.btn-cancel {
+  background-color: transparent;
+  color: #8568AE;
+}
+
+.btn-primary {
+  background-color: #8568AE;
+  color: white;
+}

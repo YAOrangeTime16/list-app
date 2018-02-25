@@ -3,6 +3,7 @@ import firebase from '../firebase';
 import bcrypt from 'bcryptjs';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import './manageGroup.css';
+import '../General/Button.css';
 import GroupPage from './GroupPage';
 import GroupLogin from './GroupLogin';
 
