@@ -1,0 +1,95 @@
+header {
+  background-image: url('../assets/header_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 10rem;
+}
+
+header > div {
+  background-color: rgba(133, 104, 174, .6);
+  height: 10rem;
+}
+
+header > div > h1 {
+  text-align: center;
+  font-size: 2.4em;
+  font-weight: 100;
+  line-height: 5rem;
+  margin-top: 0;
+}
+
+
+.contentTitle {
+  font-size: 1.8em;
+  text-align: center;
+}
+
+.createList {
+  text-align: center;
+  font-size: 1.8em;
+  border: solid .3px #47525E;
+  margin: 0 1rem;
+  padding: .5rem;
+}
+
+.description {
+  text-align: center;
+  font-size: 1.8em;
+  margin: 1rem;
+}
+
+.list-container > li {
+    display: block;
+    height: 3rem;
+    line-height: 3rem;
+    margin: 1rem;
+    padding: .5em 1em;
+    color: white;
+    font-size: 2.4em;
+    font-weight: 100;
+}
+
+.list-container > .addItem {
+  background: none;
+  color: #47525E;
+  font-size: 1.4em;
+}
+
+.list-container > .flipItem {
+  background: #FF9093;
+}
+
+.list-container > .voteItem {
+  background: #B8977E;
+}
+
+.menu-container {
+  display: grid;
+  grid-template-rows: 3rem;
+  grid-template-columns: 100%/3 1fr 1fr;
+  font-size: 2.0em;
+}
+
+.menu-container > div {
+  text-align: center;
+  color: #8568AE;
+}
+
+.menu-container > div:first-child {
+  grid-column: 1 / 2
+}
+
+.menu-container > div:last-child {
+  grid-column: 3 / 4
+}
+
+.menu-container > div > a {
+  display: block;
+  height: 100%;
+  text-decoration: none;
+  padding-top: .5rem;
+}
+
+.selected {
+  border-bottom: solid .3rem #8568AE;
+}
