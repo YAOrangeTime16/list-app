@@ -1,35 +1,71 @@
 import React, {Component} from 'react';
 import firebase from '../firebase';
 import bcrypt from 'bcryptjs';
+import {Link, NavLink} from 'react-router-dom';
 
-import Button from './Button';
+import Button from '../General/Button';
 import CreateGroup from './CreateGroup';
 import GroupList from './GroupList';
-
-/** Helper function
- * @param {array} objectArray
- * @param {object} checkObject - An object to be checked duplication with the first param of object array
- */ 
-/*
-const duplicationCheck = (objectArray, checkObject) =>{
-	const filteredArray = objectArray.filter( item => item.groupName !== checkObject.groupName )
-	if(filteredArray.length !== objectArray.length){
-		return false
-	}
-	return true
-}
-*/
+import CreateList from './CreateList';
 
 export default class Admin extends Component {
+
+	state = {
+		createGroup: false
+	}
+
+	_openCreatePage = () => this.setState({createGroup: true})
+	_cancelCreatePage = () => this.setState({createGroup: false})
+	
+	_renderGroupList = groupArray => {
+		const {getGroupId} = this.props;
+			if(groupArray){
+				return groupArray.map( group => (
+					<li key={group.groupId} onClick={()=>getGroupId(group.groupId)}>
+							<Link to={{
+										pathname: '/groups/admin',
+										search: `?groupID=${group.groupId}`,
+										state: { loggedinGroup: true }
+									}}
+							>
+							{group.groupName}
+							</Link>
+					</li>
+					)
+				)
+			}
+	}
+
+	render(){
+		const {createGroup} = this.state;
+		const {addGroup, groupId, uid, location, groups, groupName, userName, addFlipList} = this.props;
+		return (
+			<div>
+				<h1>{userName}</h1>
+				{ createGroup
+					? <CreateGroup cancelCreatePage={this._cancelCreatePage} addGroup={addGroup}/>
+					: (	
+						<div>
+							<Button clickAction={this._openCreatePage} title='Create New Group'/>
+							<ul>{ this._renderGroupList(groups) }</ul>
+						</div>
+						)
+				}
+			</div>
+		)
+	}
+}
+/* export default class Admin extends Component {
 	state = {
 		createGroup: false,
-		userId: this.props.userId,
 		userKey: null,
-		error: ''
+		error: '',
+		groupId: '',
+		groupName: '',
+		myGroups: null
 	}
 
 	_addGroup = (name, pw) => {
-		const { userId } = this.state;
 		const { userInfo } = this.props;
 
 		const hash = bcrypt.hashSync(pw, 10);
@@ -47,13 +83,23 @@ export default class Admin extends Component {
 			const userRef = firebase.database().ref(`/users/${userInfo.uid}`);
 			if(userInfo.myGroups){
 				const updatedGroups = [...userInfo.myGroups, {groupName: name, groupId: group.key}];
-				const updatedUserInfo = Object.assign(userInfo, {myGroups: updatedGroups} )
+				//const updatedUserInfo = Object.assign(userInfo, {myGroups: updatedGroups} )
 				userRef.update({myGroups: updatedGroups})
 			} else {
 				userRef.update({myGroups: [{groupName: name, groupId: group.key}]})
 			}
 		})
 	}
+
+	componentDidMount(){
+		
+	}
+
+	_getGroupInfo = groupid => {
+    const groupRef = firebase.database().ref('/groups').child(groupid);
+    groupRef.once('value', snap => 
+    this.setState({groupId: snap.key, groupName: snap.val().groupName}))
+  }
 	
 	_openAddGroup = () => {
 		this.setState({error: '', createGroup: true})
@@ -66,16 +112,17 @@ export default class Admin extends Component {
 		const { logout, userInfo } = this.props;
 		return(
 			<section>
-				<h1>{userInfo.displayName || userInfo.email}</h1>
+				<h1>Logged in as {userInfo.displayName || userInfo.email}</h1>
 				<div>{error}</div>
 				{
 					createGroup
 					? <CreateGroup addGroup={this._addGroup} resetModuleCall={this._resetModuleCall}/> 
 					: <Button clickAction={this._openAddGroup} title="Create Group" />
 				}
-				<GroupList userInfo={userInfo} {...this.props} />
+				<GroupList userInfo={userInfo} getGroupInfo={this._getGroupInfo} />
 				<Button clickAction={logout} title="Log out" />
 				</section>
 		)
 	}
 }
+*/
