@@ -1,13 +1,13 @@
 import React from 'react';
 import {NavLink} from 'react-router-dom';
 
-const PageMenu = ({clickMenu, existFlip, flipTitle, voteTitle, location}) => (
+const PageMenu = ({clickMenu, contentToShow, existFlip, flipTitle, voteTitle, location}) => (
   <nav>
-    <ul>
-      <li onClick={clickMenu}><NavLink to={location.pathname+location.search+'#flip'} name='flip'>Flip</NavLink></li>
-      <li onClick={clickMenu}><NavLink to={location.pathname+location.search+'#vote'} name='vote'>Vote</NavLink></li>
-      <li onClick={clickMenu}><NavLink to={location.pathname+location.search+'#message'} name='message'>Message</NavLink></li>
-    </ul>
+    <div className="menu-container">
+      <div onClick={clickMenu} className={contentToShow==='flip' ? 'selected' : ''}><NavLink to={location.pathname+location.search+'#flip'} name='flip'>Flip</NavLink></div>
+      <div onClick={clickMenu} className={contentToShow==='vote' ? 'selected' : ''}><NavLink to={location.pathname+location.search+'#vote'} name='vote'>Vote</NavLink></div>
+      <div onClick={clickMenu} className={contentToShow==='message' ? 'selected' : ''}><NavLink to={location.pathname+location.search+'#message'} name='message'>Message</NavLink></div>
+    </div>
   </nav>
 )
 

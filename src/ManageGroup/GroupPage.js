@@ -64,7 +64,7 @@ class GroupPage extends Component {
     const {logoutGroup, loggedinAsAdmin, location, history} = this.props
     return(
       <div>
-        <Header history={history} logoutGroup={logoutGroup} />
+        <Header history={history} logoutGroup={logoutGroup} groupName={groupInfo.groupName} />
         <Content {...this.state} {...this.props} clickMenu={this._clickMenu} createList={this._createList} getUpdate={this._getUpdate}/>
         <Link to='/admin'>{ loggedinAsAdmin ? 'Admin Panel' : 'Login as Admin?'}</Link>
       </div>

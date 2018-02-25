@@ -177,3 +177,10 @@ https://github.com/w3c/ServiceWorker/blob/master/explainer.md
 
 (Service worker in create react app)
 https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#making-a-progressive-web-app
+https://www.w3schools.com/js/js_window_navigator.asp
+
+https://qiita.com/yukika/items/1859743921a10d7e3e6b
+
+(sass for create react app)
+https://www.npmjs.com/package/create-react-app-sass
+

@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 import firebase from './firebase';
 import bcrypt from 'bcryptjs';
+import './App.css';
 
 import ManageGroup from './ManageGroup';
 import GroupPage from './ManageGroup/GroupPage';
@@ -126,22 +127,27 @@ class App extends Component {
   }
 
   _loginGroup = (password, groupID) => {
-    const groupRef = firebase.database().ref(`/groups/${groupID}`);
-    groupRef.once('value', group => {
-      if(group.val() === null){
-        this.setState({error: 'There is no such a group'})
-        return false
-      } else {
-        const hash = group.val().groupPass;
-        const passOK = bcrypt.compareSync(password, hash)
-        if(!passOK){
-          this.setState({error: 'Password is wrong'}) 
+    if(!password || !groupID) {
+      this.setState({error: 'Please fill in'})
+    } else {
+      const groupRef = firebase.database().ref(`/groups/${groupID}`);
+      groupRef.once('value', group => {
+        if(group.val() === null){
+          this.setState({error: 'There is no such a group'})
+          return false
         } else {
-          firebase.auth().signInAnonymously().catch(e=>this.setState({error: e.message}))
-          this.setState({loggedinAsMember: true, userBelongsToThisGroupAs: 'member', groupId: groupID, error: ''})
-        } 
-      }
-    })
+          const hash = group.val().groupPass;
+          const passOK = bcrypt.compareSync(password, hash)
+          if(!passOK){
+            this.setState({error: 'Password is wrong'}) 
+          } else {
+            firebase.auth().signInAnonymously().catch(e=>this.setState({error: e.message}))
+            this.setState({loggedinAsMember: true, userBelongsToThisGroupAs: 'member', groupId: groupID, error: ''})
+          } 
+        }
+      })
+    }
+
   }
   
   _logoutAdmin = (cb) => {
