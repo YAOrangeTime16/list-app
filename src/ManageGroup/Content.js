@@ -30,12 +30,10 @@ export default class Content extends Component {
   }
 
   render(){
-    const {flipList, lists} = this.state;
     const {createList, page, groupName, logout, groupInfo} = this.props;
     return(
-      <div>
+      <div className="groupContent">
         <PageMenu {...this.props}/>
-        <p>Group Main Content</p>
         {this._showList(this.props.contentToShow)}
       </div>
     )

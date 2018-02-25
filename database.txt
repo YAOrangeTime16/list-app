@@ -181,6 +181,18 @@ https://www.w3schools.com/js/js_window_navigator.asp
 
 https://qiita.com/yukika/items/1859743921a10d7e3e6b
 
-(sass for create react app)
-https://www.npmjs.com/package/create-react-app-sass
+
+------ 2018-02-25 ------
+http://alistapart.com/article/offline-first
+https://scotch.io/tutorials/how-to-make-your-existing-react-app-progressive-in-10-minutes
+https://ponyfoo.com/articles/backgroundsync
+
+ServiceWorker
+https://www.twilio.com/blog/2017/08/working-with-environment-variables-in-node-js.html
+https://developer.mozilla.org/en-US/docs/Web/API/URL/URL
+https://github.com/WICG/BackgroundSync/blob/master/explainer.md
+
+Connection webAPI
+https://developers.google.com/web/updates/2011/06/navigator-onLine-in-Chrome-Dev-channel
+
 
