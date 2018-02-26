@@ -1,17 +1,12 @@
 import React, {Component} from 'react';
 import firebase from '../firebase';
+
 import Button from '../General/Button';
 import Header from './Header';
 import PageMenu from './PageMenu';
 import ListItem from './ListItem';
 
 export default class Content extends Component {
-  state={
-  }
-
-  componentDidMount(){
-    
-  }
 
   _showList = contentToShow => {
     switch(contentToShow){

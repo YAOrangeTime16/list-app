@@ -1,6 +1,6 @@
 import React from 'react';
 import './Button.css';
 
-const Button = ({clickAction, title, classname})=> <button onClick={clickAction} className={classname}>{title}</button>
+const Button = ({clickAction, title, className})=> <button onClick={clickAction} className={className}>{title}</button>
 
 export default Button;

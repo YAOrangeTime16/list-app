@@ -19,7 +19,7 @@ export default class ManageGroup extends Component {
  render(){
    const {groupId,loginGroup, loggedinAsMember, error} = this.props;
   return (
-    <div>
+    <div className="managegroup-container">
       {
         (loggedinAsMember) ? <Redirect to={`/groups/${groupId}`} />
         : <GroupLogin error={error} loginGroup={loginGroup} />

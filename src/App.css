@@ -1,9 +1,41 @@
-ul {
-  list-style: none;
-  padding: 0; 
+a {
+  text-decoration: none;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+form > input {
+  font-family: "Lato", Helvetica, sans-serif, Arial;
+  margin-top: 1rem;
+}
+
+h1, h2, h3 {
+  font-family: "Lato", Helvetica, sans-serif, Arial;
+  font-weight: 100;
+}
+
+h1 {
+  font-size: 2.8em;
+}
+
+h2 {
+  font-size: 2.2em;
+}
+
+h3 {
+  font-size: 1.6em;
 }
 
 input {
   height: 2rem;
   width: 90%;
+}
+
+ul {
+  list-style: none;
+  padding: 0; 
 }

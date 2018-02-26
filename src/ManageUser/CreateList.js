@@ -24,12 +24,12 @@ class CreateList extends Component {
           <input type="text" onChange={this._addListTitle} value={this.state.description} name='description' placeholder='Explain about this list' />
           <input type="text" onChange={this._addListTitle} value={this.state.listItem1} name='listItem1' placeholder='item1' />
           <input type="text" onChange={this._addListTitle} value={this.state.listItem2} name='listItem2' placeholder='item2' />
-          <Button clickAction={()=>closeForm()} title="cancel" classname="btn-cancel" />
+          <Button clickAction={()=>closeForm()} title="cancel" className="btn-secondary" />
           <Button clickAction={()=>{
             addList(groupId, listTitle, description, listItem1, listItem2, type)
             closeForm()
             getUpdate()
-          }} title="Add this list" classname="btn-primary" />
+          }} title="Add this list" className="btn-primary" />
           </form>
         </div>)
     }

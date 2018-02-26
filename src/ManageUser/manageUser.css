@@ -14,10 +14,13 @@
   width: 90%;
 }
 
+.logout-admin {
+  position: fixed;
+  bottom: 5rem;
+}
+
 .manageuser-container {
   margin: 0 1rem;
-  display: flex;
-  flex-direction: column;
 }
 
 .manageuser-container > div {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import firebase from '../firebase';
-import {Link} from 'react-router-dom';
+import Button from '../General/Button';
 import Header from './Header';
 import Content from './Content';
 
@@ -64,9 +64,9 @@ class GroupPage extends Component {
     const {logoutGroup, loggedinAsAdmin, location, history} = this.props
     return(
       <div>
-        <Header history={history} logoutGroup={logoutGroup} groupName={groupInfo.groupName} />
-        <Content {...this.state} {...this.props} clickMenu={this._clickMenu} createList={this._createList} getUpdate={this._getUpdate}/>
-        <Link to='/admin'>{ loggedinAsAdmin ? 'Admin Panel' : 'Login as Admin?'}</Link>
+        <Header history={history} {...this.props} groupName={groupInfo.groupName} />
+        <Content {...this.state} {...this.props} clickMenu={this._clickMenu} createList={this._createList} logoutGroup={logoutGroup} getUpdate={this._getUpdate}/>
+        <Button clickAction={()=>logoutGroup(()=>history.replace('/'))} title="logout from group" className="btn-secondary logout-group" />
       </div>
     )
   }

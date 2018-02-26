@@ -13,7 +13,6 @@
 #group-header > div > h1 {
   text-align: center;
   color: white;
-  font-size: 2.4em;
   font-weight: 100;
   line-height: 5rem;
   margin-top: 0;
@@ -28,7 +27,8 @@
 .createList {
   text-align: center;
   font-size: 1.8em;
-  border: solid .3px #47525E;
+  border: solid .5px #47525E;
+  border-radius: 3px;
   margin: 0 1rem;
   padding: .5rem;
 }
@@ -37,6 +37,10 @@
   text-align: center;
   font-size: 1.8em;
   margin: 1rem;
+}
+
+.link-adminlogin, .link-grouplogin, .link-toggle {
+  font-size: 1.8em;
 }
 
 .list-container > li {
@@ -58,10 +62,16 @@
 
 .list-container > .flipItem {
   background: #FF9093;
+  box-shadow: 2px 2px 7px #47525E;
 }
 
 .list-container > .voteItem {
   background: #B8977E;
+  box-shadow: 2px 2px 7px #47525E;
+}
+
+.managegroup-container {
+  margin: 0 1rem;
 }
 
 .menu-container {
@@ -87,8 +97,12 @@
 .menu-container > div > a {
   display: block;
   height: 100%;
-  text-decoration: none;
   padding-top: .5rem;
+}
+
+.menu-container > div > a:visited,
+.menu-container > div > a:link {
+  color: #8568AE;
 }
 
 .selected {

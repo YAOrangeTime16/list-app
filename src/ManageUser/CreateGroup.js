@@ -23,14 +23,14 @@ export default class CreateGroup extends Component {
         <Button
           clickAction={cancelCreatePage}
           title="Cancel"
-          classname="btn-cancel" />
+          className="btn-secondary" />
         <Button 
           clickAction={ ()=>{
             addGroup(groupName, groupPassword)
             cancelCreatePage()
           } }
           title="Add This Group"
-          classname="btn-primary" />
+          className="btn-primary" />
       </form>
     )
   }

@@ -22,7 +22,7 @@ class ManageUser extends Component {
             ? <Login />
             : (<div>
                 <Admin {...this.props} groupId={groupId} groups={groups}/>
-                <button onClick={()=>logoutAdmin(()=>history.replace('/admin'))}>Logout from Admin</button>
+                <button onClick={()=>logoutAdmin(()=>history.replace('/admin'))} className="btn-secondary logout-admin">Logout from Admin</button>
               </div>)
         }
       </div>

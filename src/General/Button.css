@@ -1,17 +1,25 @@
 button {
-  border: none;
+  cursor: pointer;
   padding: .5rem 1rem;
   border-radius: 3px;
   font-family: "Lato", Helvetica, sans-serif, Arial;
+  font-weight: 200;
+  font-size: 1.8em;
 }
 
 
-.btn-cancel {
+.btn-secondary {
   background-color: transparent;
   color: #8568AE;
+  border: solid .5px #8568AE;
 }
 
 .btn-primary {
   background-color: #8568AE;
+  border: none;
   color: white;
+}
+
+.btn-wide {
+  width: 60%;
 }
