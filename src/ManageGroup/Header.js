@@ -1,6 +1,5 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import Button from '../General/Button';
 
 const Header = ({loggedinAsAdmin, groupName, history}) => (
   <header id="group-header">

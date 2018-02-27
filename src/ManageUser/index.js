@@ -1,21 +1,14 @@
 import React, { Component } from 'react';
-import {Redirect, Route, Switch} from 'react-router-dom';
-import firebase from '../firebase';
+
 import Admin from './Admin';
 import Login from './Login';
 import './manageUser.css';
 import '../General/Button.css';
 
 class ManageUser extends Component {
-  state = {
-  }
-  
-  componentDidMount(){
-    
-  }
 
   render(){
-    const {groupId, logoutAdmin, loggedinAsAdmin, loggedInAs, groups, history} = this.props;
+    const {groupId, logoutAdmin, loggedinAsAdmin, groups, history} = this.props;
     return (
       <div className="manageuser-container">
         { !loggedinAsAdmin 

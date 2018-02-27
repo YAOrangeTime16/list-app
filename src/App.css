@@ -15,19 +15,21 @@ form > input {
 
 h1, h2, h3 {
   font-family: "Lato", Helvetica, sans-serif, Arial;
-  font-weight: 100;
 }
 
 h1 {
   font-size: 2.8em;
+  font-weight: 200;
 }
 
 h2 {
   font-size: 2.2em;
+  font-weight: 100;
 }
 
 h3 {
   font-size: 1.6em;
+  font-weight: 100;
 }
 
 input {

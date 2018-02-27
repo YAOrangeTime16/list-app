@@ -1,8 +1,4 @@
 import React, {Component} from 'react';
-import firebase from '../firebase';
-
-import Button from '../General/Button';
-import Header from './Header';
 import PageMenu from './PageMenu';
 import ListItem from './ListItem';
 
@@ -25,7 +21,6 @@ export default class Content extends Component {
   }
 
   render(){
-    const {createList, page, groupName, logout, groupInfo} = this.props;
     return(
       <div className="groupContent">
         <PageMenu {...this.props}/>

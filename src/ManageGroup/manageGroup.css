@@ -36,7 +36,8 @@
 .description {
   text-align: center;
   font-size: 1.8em;
-  margin: 1rem;
+  margin: 1rem 2rem;
+  word-wrap: break-word;
 }
 
 .link-adminlogin, .link-grouplogin, .link-toggle {
@@ -70,8 +71,50 @@
   box-shadow: 2px 2px 7px #47525E;
 }
 
-.managegroup-container {
+.flippedItem {
+  background:#F2DCDC;
+  box-shadow: 2px 2px 7px #47525E;
+}
+
+.flippedItem > div {
+  text-decoration: line-through;
+}
+
+.votedItem {
+  background: #DEBF96;
+  box-shadow: 2px 2px 7px #47525E;
+}
+
+.votedItem > div {
+  width: 1rem;
+  height: 1rem;
+}
+
+.votedItem > div::after {
+  content: 'Voted!';
+  padding: 0 1rem;
+  margin: 0 0 0 3rem;
+  color: white;
+  text-shadow: 1px 1px 2px #47525E;
+  font-weight: 400;
+}
+#managegroup-container {
+  background-image: url('../assets/cover.jpg');
+  background-position: center;
+  background-size: cover;
+  height: 100vh;
+  width: 100%;
+}
+
+.managegroup-cover {
+  background-color: rgba(255, 255, 255, 0.6);
+  width: 100%;
+  height: 100%;
+}
+
+.managegroup-content {
   margin: 0 1rem;
+  padding-top: 3rem;
 }
 
 .menu-container {

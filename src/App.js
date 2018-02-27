@@ -52,7 +52,6 @@ class App extends Component {
 		const groupsRef = firebase.database().ref(`/users/${uid}/myGroups`)
 		groupsRef.on('value', snap => this.setState({groups: snap.val()}))
   }
-  
 
   componentDidMount(){
     this._checkUserLoggedInAs()
@@ -100,8 +99,8 @@ class App extends Component {
       label: name,
       description: text,
       items: [
-        {name: item1, status: false, id: groupID + 'i1'},
-        {name: item2, status: false, id: groupID + 'i2'}],
+        {name: item1, status: (type==='flip') ? false : 0, id: groupID + 'i0'},
+        {name: item2, status: (type==='flip') ? false : 0, id: groupID + 'i1'}],
       groupId: groupID
     }
     //save to state?? listObject -check wifi connection
@@ -121,7 +120,6 @@ class App extends Component {
     })
     .catch(e=>console.log(e.message))
     }
-    
   }
 
   _getGroupId = (id) => {

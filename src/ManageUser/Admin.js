@@ -1,12 +1,9 @@
 import React, {Component} from 'react';
-import firebase from '../firebase';
-import bcrypt from 'bcryptjs';
-import {Link, NavLink} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 import Button from '../General/Button';
 import CreateGroup from './CreateGroup';
-import GroupList from './GroupList';
-import CreateList from './CreateList';
+import {ArrowMenu, DeleteIcon} from '../assets/items';
 
 export default class Admin extends Component {
 
@@ -22,6 +19,7 @@ export default class Admin extends Component {
 			if(groupArray){
 				return groupArray.map( group => (
 					<li className="admin-grouplist" key={group.groupId} onClick={()=>getGroupId(group.groupId)}>
+							<DeleteIcon />
 							<Link to={{
 										pathname: '/groups/admin',
 										search: `?groupID=${group.groupId}`,
@@ -30,6 +28,7 @@ export default class Admin extends Component {
 							>
 							{group.groupName}
 							</Link>
+							<ArrowMenu />
 					</li>
 					)
 				)
@@ -38,7 +37,7 @@ export default class Admin extends Component {
 
 	render(){
 		const {createGroup} = this.state;
-		const {addGroup, groupId, uid, location, groups, groupName, userName, addFlipList} = this.props;
+		const {addGroup, groups, userName} = this.props;
 		return (
 			<div>
 				<h3>Logged in as: {userName}</h3>
