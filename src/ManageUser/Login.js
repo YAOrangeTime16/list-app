@@ -53,8 +53,8 @@ class Login extends Component {
           <input type="password" name="password" onChange={this._setValue} value={password} placeholder="Your Password"/>
           <Button clickAction={signup ? this._signupAdmin : this._loginAdmin} title={ signup ? "Sign Up" : "Log In as Admin"} className="btn-primary btn-wide" />
         </form>
-        <p>{error ? error : null}</p>
-        <div onClick={this._toggleSignup} className="link-toggle">{signup ? "Already have an account?" : "Sign Up?"}</div>
+        <p className="error-text">{error ? error : null}</p>
+        <div onClick={this._toggleSignup} className="link-toggle">{signup ? "Already have an account?" : "Create New Account?"}</div>
       </div>
     )
   }

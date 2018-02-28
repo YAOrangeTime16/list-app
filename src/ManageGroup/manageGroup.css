@@ -40,8 +40,35 @@
   word-wrap: break-word;
 }
 
-.link-adminlogin, .link-grouplogin, .link-toggle {
+.error-text {
+  color: red;
+  font-size: 1.6em;
+  text-align: center;
+  height: 1rem;
+}
+
+.link-adminlogin, .link-grouplogin, .link-toggle, .link-gotoadmin {
   font-size: 1.8em;
+}
+
+.link-adminlogin, .link-grouplogin {
+  color: #8568AE;
+  text-shadow: 3px 3px 6px gray;
+  text-decoration: underline;
+  text-align: right;
+}
+
+.link-gotoadmin {
+  color: white;
+  text-decoration: underline;
+  text-align: right;
+  padding-right: 1rem;
+  padding-top: 1rem;
+}
+
+.link-toggle {
+  cursor: pointer;
+  text-align: center;
 }
 
 .list-container > li {
@@ -86,8 +113,7 @@
 }
 
 .votedItem > div {
-  width: 1rem;
-  height: 1rem;
+  width: 100%;
 }
 
 .votedItem > div::after {

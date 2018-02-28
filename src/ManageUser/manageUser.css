@@ -15,15 +15,11 @@
   width: 100%;
 }
 
-.svg-arrowMenu {
-  position: relative;
-  top: .8em;
-}
-
-.svg-deleteicon {
-  position: relative;
-  top: .8em;
-  left: .5em;
+.error-text {
+  color: red;
+  font-size: 1.6em;
+  text-align: center;
+  height: 1rem;
 }
 
 .logout-admin {
@@ -37,4 +33,15 @@
 .manageuser-container > div {
   width: 100%;
   padding-top: 3rem;
+}
+
+.svg-arrowMenu {
+  position: relative;
+  top: .8em;
+}
+
+.svg-deleteicon {
+  position: relative;
+  top: .8em;
+  left: .5em;
 }

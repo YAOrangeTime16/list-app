@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
   Switch,
-  Redirect,
   Route
 } from 'react-router-dom';
 import firebase from './firebase';
@@ -94,7 +93,6 @@ class App extends Component {
   }
   
   _addList = (groupID, name, text, item1, item2, type) => {
-    const {uid, groups} = this.state
     const listObject = {
       label: name,
       description: text,
@@ -128,7 +126,7 @@ class App extends Component {
 
   _loginGroup = (password, groupID) => {
     if(!password || !groupID) {
-      this.setState({error: 'Please fill in'})
+      this.setState({error: 'Please fill in the form'})
     } else {
       const groupRef = firebase.database().ref(`/groups/${groupID}`);
       groupRef.once('value', group => {
@@ -143,6 +141,19 @@ class App extends Component {
           } else {
             firebase.auth().signInAnonymously().catch(e=>this.setState({error: e.message}))
             this.setState({loggedinAsMember: true, userBelongsToThisGroupAs: 'member', groupId: groupID, error: ''})
+            //check if this groups has already lists
+            const groupRef = firebase.database().ref(`/groups/${groupID}`)
+            groupRef.child('listFlipID').once('value', id=> {
+              if(id !== null) {
+                this.setState({listFlipID: id.val()})
+              }
+            })
+            groupRef.child('listVoteID').once('value', id => {
+              if(id !== null) {
+                this.setState({listVoteID: id.val()})
+              }
+            })
+
           } 
         }
       })
@@ -200,10 +211,11 @@ class App extends Component {
           <Route path='/admin'
             render={(props)=>
               <ManageUser {...props} {...this.state}
+                addGroup={this._addGroup}
+                getGroupId={this._getGroupId}
                 logoutAdmin={this._logoutAdmin}
                 singupAdmin={this._signupAdmin}
-                addGroup={this._addGroup}
-                getGroupId={this._getGroupId} />
+              />
             }
           />
         </Switch>

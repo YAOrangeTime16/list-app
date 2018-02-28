@@ -10,7 +10,9 @@ form {
 
 form > input {
   font-family: "Lato", Helvetica, sans-serif, Arial;
+  font-size: 1.4em;
   margin-top: 1rem;
+  padding-left: 1rem;
 }
 
 h1, h2, h3 {

@@ -67,7 +67,6 @@ class GroupPage extends Component {
         return false;
       } else {
         const updatedStatus = Object.assign(itemToUpdateStatus, {status: [...currentVoters, uid]})
-        console.log(updatedStatus)
         firebase.database().ref(`/voteLists/${groupInfo.listVoteID}/items/${index}`).set(updatedStatus)
       }
     }
@@ -88,8 +87,8 @@ class GroupPage extends Component {
   }
 
   _getGroupInfo = ()=>{
-    const {location, match} = this.props
-    const theGroupsID = (location.search) ? location.search.substr(9) : match.params.id;
+    const {groupId, match} = this.props
+    const theGroupsID = (groupId) ? groupId : match.params.id;
     if(theGroupsID){
       const groupRef = firebase.database().ref(`/groups/${theGroupsID}`)
       groupRef.once('value', info=> this.setState({groupInfo: info.val()}) )

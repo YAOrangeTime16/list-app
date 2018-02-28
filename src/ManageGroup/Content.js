@@ -15,7 +15,7 @@ export default class Content extends Component {
       break;
 
       case 'message':
-      return <div>message</div>
+      return <div>INSTANT MESSAGE!!!</div>
       break;
     }
   }
