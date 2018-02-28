@@ -16,8 +16,17 @@ class ListItem extends Component {
 
   _renderItems = (list) => {
     const {openFormItem} = this.state;
-    const {addItemToList, changeItemStatus, groupInfo, type} = this.props;
+    const {addItemToList, changeItemStatus, groupInfo, type, uid} = this.props;
     if(list){
+      const classname = (status) => {
+        if (type==='flip') {
+          return status ? 'flippedItem' : 'flipItem';
+        } else if (type==='vote'){
+          return (status) && status.includes(uid) ? 'votedItem' : 'voteItem';
+        } else {
+          return null;
+        }
+      }
       return (
         <ul className="list-container">
           { list.map(item => 
@@ -25,9 +34,7 @@ class ListItem extends Component {
               key={item.id}
               onClick={()=>changeItemStatus(item.id, type)}
               className={
-                (item.status)
-                ? ( type==='flip' ? 'flippedItem' : type==='vote' ? 'votedItem' : null)
-                : (type==='flip' ? 'flipItem' : type==='vote' ? 'voteItem' : null)
+                classname(item.status)
               }
             >
               <div>
