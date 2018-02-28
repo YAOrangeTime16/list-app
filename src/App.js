@@ -72,7 +72,7 @@ class App extends Component {
         listFlipID: '',
         listVoteID: ''
       }
-    //save to state??: groupObject check wifi connection
+    //save to state or localStorage??: groupObject check wifi connection
 
 		firebase.database().ref(`/groups`).push(groupObject)
 		.then(group=>{
