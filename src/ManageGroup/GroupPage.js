@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import firebase from '../firebase';
-import {Link} from 'react-router-dom';
+import Button from '../General/Button';
 import Header from './Header';
 import Content from './Content';
 
@@ -10,6 +10,81 @@ class GroupPage extends Component {
     contentToShow: 'flip',
     flipList: '',
     voteList: ''
+  }
+
+  _addItemToList = (newItemName, listType) => {
+    const {flipList, voteList, groupInfo} = this.state;
+    if(listType==='flip' && flipList){
+      const numberOfCurrentItem = flipList.items.length;
+      const newItem = {
+        id: `${flipList.groupId}i${numberOfCurrentItem}`,
+        name: newItemName,
+        status: false
+      }
+      const updateItemsArray = [...flipList.items, newItem]
+      const updateList = Object.assign({...flipList}, {items: updateItemsArray})
+      this.setState({flipList: updateList})
+
+      firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(updateItemsArray)
+
+    } else if(listType==='vote' && voteList){
+      const numberOfCurrentItem = voteList.items.length;
+      const newItem = {
+        id: `${voteList.groupId}i${numberOfCurrentItem}`,
+        name: newItemName,
+        status: []
+      }
+      const updateItemsArray = [...voteList.items, newItem]
+      const updateList = Object.assign({...voteList}, {items: updateItemsArray})
+      this.setState({voteList: updateList})
+
+      firebase.database().ref(`/voteLists/${groupInfo.listVoteID}/items`).set(updateItemsArray)
+    } else {
+      return;
+    }
+  }
+
+  _changeItemStatus = (selectedItemID, listType) => {
+    const {flipList, voteList, groupInfo} = this.state;
+    const {uid} = this.props;
+    const index = selectedItemID.substr(-1);
+
+    if(listType==='flip' && selectedItemID){
+      const itemToUpdateStatus = flipList.items[index];
+      const updatedStatus = Object.assign(itemToUpdateStatus, {status: !itemToUpdateStatus.status})
+      const itemArray = [...flipList.items];
+      itemArray.splice(index, 1, updatedStatus);
+      const updatedItemObject = Object.assign({...flipList}, {items: itemArray})
+      
+      this.setState({flipList: updatedItemObject})
+      firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(itemArray)
+    
+    } else if (listType==='vote' && selectedItemID){
+      const itemToUpdateStatus = voteList.items[index];
+      const currentVoters = [...itemToUpdateStatus.status]
+      const voted = currentVoters.includes(uid);
+      if(voted){
+        return false;
+      } else {
+        const updatedStatus = Object.assign(itemToUpdateStatus, {status: [...currentVoters, uid]})
+        console.log(updatedStatus)
+        firebase.database().ref(`/voteLists/${groupInfo.listVoteID}/items/${index}`).set(updatedStatus)
+      }
+    }
+  }
+
+  componentDidMount(){
+    this._getGroupInfo()
+  }
+
+  componentWillUpdate(nextProps){
+    if((nextProps.listFlipID !== this.props.listFlipID) || (nextProps.listVoteID !== this.props.listVoteID)){
+      this._getGroupInfo()
+    }
+  }
+
+  _clickMenu = (e) => {
+    this.setState({contentToShow: e.target.name})
   }
 
   _getGroupInfo = ()=>{
@@ -46,27 +121,23 @@ class GroupPage extends Component {
     }
   }
 
-  componentDidMount(){
-    this._getGroupInfo()
-  }
-
-  componentWillUpdate(nextProps){
-    if((nextProps.listFlipID !== this.props.listFlipID) || (nextProps.listVoteID !== this.props.listVoteID)){
-      this._getGroupInfo()
-    }
-  }
-  _clickMenu = (e) => {
-    this.setState({contentToShow: e.target.name})
-  }
-
   render(){
     const {groupInfo} = this.state
-    const {logoutGroup, loggedinAsAdmin, location, history} = this.props
+    const {logoutGroup, history} = this.props
     return(
       <div>
-        <Header history={history} logoutGroup={logoutGroup} groupName={groupInfo.groupName} />
-        <Content {...this.state} {...this.props} clickMenu={this._clickMenu} createList={this._createList} getUpdate={this._getUpdate}/>
-        <Link to='/admin'>{ loggedinAsAdmin ? 'Admin Panel' : 'Login as Admin?'}</Link>
+        <Header {...this.props} history={history} groupName={groupInfo.groupName} />
+        <Content {...this.state} {...this.props}
+            addItemToList={this._addItemToList}
+            changeItemStatus={this._changeItemStatus}
+            clickMenu={this._clickMenu}
+            createList={this._createList}
+            getUpdate={this._getUpdate}
+            logoutGroup={logoutGroup} />
+        <Button 
+            clickAction={()=>logoutGroup(()=>history.replace('/'))}
+            title="logout from group"
+            className="btn-secondary logout-group" />
       </div>
     )
   }

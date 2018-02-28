@@ -22,13 +22,15 @@ export default class CreateGroup extends Component {
         <input name="groupPassword" value={groupPassword} onChange={this._setValue} type="password" placeholder="Group Password" />
         <Button
           clickAction={cancelCreatePage}
-          title="Cancel"/>
+          title="Cancel"
+          className="btn-secondary" />
         <Button 
           clickAction={ ()=>{
             addGroup(groupName, groupPassword)
             cancelCreatePage()
           } }
-          title="Add This Group" />
+          title="Add This Group"
+          className="btn-primary" />
       </form>
     )
   }

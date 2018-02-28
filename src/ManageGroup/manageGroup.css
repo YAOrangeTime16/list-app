@@ -1,0 +1,153 @@
+#group-header {
+  background-image: url('../assets/header_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 10rem;
+}
+
+#group-header > .bg-cover {
+  background-color: rgba(133, 104, 174, .6);
+  height: 10rem;
+}
+
+#group-header > div > h1 {
+  text-align: center;
+  color: white;
+  font-weight: 100;
+  line-height: 5rem;
+  margin-top: 0;
+}
+
+
+.contentTitle {
+  font-size: 1.8em;
+  text-align: center;
+}
+
+.createList {
+  text-align: center;
+  font-size: 1.8em;
+  border: solid .5px #47525E;
+  border-radius: 3px;
+  margin: 0 1rem;
+  padding: .5rem;
+}
+
+.description {
+  text-align: center;
+  font-size: 1.8em;
+  margin: 1rem 2rem;
+  word-wrap: break-word;
+}
+
+.link-adminlogin, .link-grouplogin, .link-toggle {
+  font-size: 1.8em;
+}
+
+.list-container > li {
+    display: block;
+    height: 2.5rem;
+    line-height: 2.5rem;
+    margin: 1rem;
+    padding: .5em 1em;
+    color: white;
+    font-size: 2.4em;
+    font-weight: 100;
+}
+
+.list-container > .addItem {
+  background: none;
+  color: #47525E;
+  font-size: 1.4em;
+}
+
+.list-container > .flipItem {
+  background: #FF9093;
+  box-shadow: 2px 2px 7px #47525E;
+}
+
+.list-container > .voteItem {
+  background: #B8977E;
+  box-shadow: 2px 2px 7px #47525E;
+}
+
+.flippedItem {
+  background:#F2DCDC;
+  box-shadow: 2px 2px 7px #47525E;
+}
+
+.flippedItem > div {
+  text-decoration: line-through;
+}
+
+.votedItem {
+  background: #DEBF96;
+  box-shadow: 2px 2px 7px #47525E;
+}
+
+.votedItem > div {
+  width: 1rem;
+  height: 1rem;
+}
+
+.votedItem > div::after {
+  content: 'Voted!';
+  padding: 0 1rem;
+  margin: 0 0 0 3rem;
+  color: white;
+  text-shadow: 1px 1px 2px #47525E;
+  font-weight: 400;
+}
+#managegroup-container {
+  background-image: url('../assets/cover.jpg');
+  background-position: center;
+  background-size: cover;
+  height: 100vh;
+  width: 100%;
+}
+
+.managegroup-cover {
+  background-color: rgba(255, 255, 255, 0.6);
+  width: 100%;
+  height: 100%;
+}
+
+.managegroup-content {
+  margin: 0 1rem;
+  padding-top: 3rem;
+}
+
+.menu-container {
+  display: grid;
+  grid-template-rows: 3rem;
+  grid-template-columns: 33.3% 33.3% 1fr;
+  font-size: 1.8em;
+}
+
+.menu-container > div {
+  text-align: center;
+  color: #8568AE;
+}
+
+.menu-container > div:first-child {
+  grid-column: 1 / 2
+}
+
+.menu-container > div:last-child {
+  grid-column: 3 / 4
+}
+
+.menu-container > div > a {
+  display: block;
+  height: 100%;
+  padding-top: .5rem;
+}
+
+.menu-container > div > a:visited,
+.menu-container > div > a:link {
+  color: #8568AE;
+}
+
+.selected {
+  border-bottom: solid .3rem #8568AE;
+}

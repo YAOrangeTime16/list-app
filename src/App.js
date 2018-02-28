@@ -52,7 +52,6 @@ class App extends Component {
 		const groupsRef = firebase.database().ref(`/users/${uid}/myGroups`)
 		groupsRef.on('value', snap => this.setState({groups: snap.val()}))
   }
-  
 
   componentDidMount(){
     this._checkUserLoggedInAs()
@@ -73,7 +72,7 @@ class App extends Component {
         listFlipID: '',
         listVoteID: ''
       }
-      console.log(groupObject)
+    //save to state or localStorage??: groupObject check wifi connection
 
 		firebase.database().ref(`/groups`).push(groupObject)
 		.then(group=>{
@@ -100,10 +99,12 @@ class App extends Component {
       label: name,
       description: text,
       items: [
-        {name: item1, status: false, id: groupID + 'i1'},
-        {name: item2, status: false, id: groupID + 'i2'}],
+        {name: item1, status: (type==='flip') ? false : 0, id: groupID + 'i0'},
+        {name: item2, status: (type==='flip') ? false : 0, id: groupID + 'i1'}],
       groupId: groupID
     }
+    //save to state?? listObject -check wifi connection
+
     if(type==='flip'){
       firebase.database().ref(`/flipLists`).push(listObject)
       .then(list=>{
@@ -119,7 +120,6 @@ class App extends Component {
     })
     .catch(e=>console.log(e.message))
     }
-    
   }
 
   _getGroupId = (id) => {
@@ -183,21 +183,33 @@ class App extends Component {
     return (
       <section>
         <Switch>
-          <Route exact path='/' render={()=><ManageGroup {...this.state} loginGroup={this._loginGroup} error={this.state.error}/>} />
-          <Route path='/groups/:id' render={(props)=><GroupPage {...this.state} {...props} logoutGroup={this._logoutGroup}  addList={this._addList}/>} />
-          <Route path='/admin' render={(props)=>
-                    <ManageUser {...props} {...this.state}
-                        logoutAdmin={this._logoutAdmin}
-                        singupAdmin={this._signupAdmin}
-                        addGroup={this._addGroup}
-                        getGroupId={this._getGroupId} />
-                  } />
+          <Route exact path='/' 
+            render={()=>
+              <ManageGroup {...this.state} 
+                loginGroup={this._loginGroup}
+                error={this.state.error}/>
+            }
+          />
+          <Route path='/groups/:id'
+            render={(props)=>
+              <GroupPage {...this.state} {...props}
+                logoutGroup={this._logoutGroup}
+                addList={this._addList} />
+            }
+          />
+          <Route path='/admin'
+            render={(props)=>
+              <ManageUser {...props} {...this.state}
+                logoutAdmin={this._logoutAdmin}
+                singupAdmin={this._signupAdmin}
+                addGroup={this._addGroup}
+                getGroupId={this._getGroupId} />
+            }
+          />
         </Switch>
       </section>
     )
   }
 }
-
-const Home = () => <div>Home</div>
 
 export default App;

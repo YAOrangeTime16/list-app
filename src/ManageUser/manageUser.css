@@ -1,0 +1,40 @@
+.admin-grouplist {
+  display: grid;
+  grid-template-columns: 15% 80% 5%;
+  height: 3rem;
+  width: 100%;
+  font-size: 1.8em;
+  border-bottom: solid .5px #8492A6;
+
+}
+
+.admin-grouplist > a {
+  display: block;
+  text-decoration: none;
+  line-height: 3rem;
+  width: 100%;
+}
+
+.svg-arrowMenu {
+  position: relative;
+  top: .8em;
+}
+
+.svg-deleteicon {
+  position: relative;
+  top: .8em;
+  left: .5em;
+}
+
+.logout-admin {
+  margin-top: 2rem;
+}
+
+.manageuser-container {
+  margin: 0 1rem;
+}
+
+.manageuser-container > div {
+  width: 100%;
+  padding-top: 3rem;
+}

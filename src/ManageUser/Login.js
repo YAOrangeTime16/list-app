@@ -46,14 +46,15 @@ class Login extends Component {
     const { email, password, errorMessage: error, signup} = this.state;
     return(
       <div>
-        <Link to='/'>Log in to Group?</Link>
+        <Link to='/'><div className="link-grouplogin">Log in to Group?</div></Link>
+        <h1>Account {signup ? 'Sign Up' : 'Login'}</h1>
         <form onSubmit={e=>e.preventDefault()}>
           <input type="email" name="email" onChange={this._setValue} value={email} placeholder="Your Email" />
           <input type="password" name="password" onChange={this._setValue} value={password} placeholder="Your Password"/>
-          <Button clickAction={signup ? this._signupAdmin : this._loginAdmin} title={ signup ? "Sign Up" : "Log In"} />
+          <Button clickAction={signup ? this._signupAdmin : this._loginAdmin} title={ signup ? "Sign Up" : "Log In as Admin"} className="btn-primary btn-wide" />
         </form>
         <p>{error ? error : null}</p>
-        <p onClick={this._toggleSignup}>{signup ? "Already have an account?" : "Sign Up?"}</p>
+        <div onClick={this._toggleSignup} className="link-toggle">{signup ? "Already have an account?" : "Sign Up?"}</div>
       </div>
     )
   }

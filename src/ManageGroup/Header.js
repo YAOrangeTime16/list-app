@@ -1,12 +1,11 @@
 import React from 'react';
-import Button from '../General/Button';
-//import '../assets/header_bg.jpg';
+import {Link} from 'react-router-dom';
 
-const Header = ({logoutGroup, groupName, history}) => (
-  <header>
+const Header = ({loggedinAsAdmin, groupName, history}) => (
+  <header id="group-header">
     <div className="bg-cover">
+    <Link to='/admin'><div className="link-adminlogin">{ loggedinAsAdmin ? 'Admin Panel' : 'Login as Admin?'}</div></Link>
     <h1>{groupName}</h1>
-    <Button clickAction={()=>logoutGroup(()=>history.replace('/'))} title="logout from group" />
     </div>
   </header>
 )

@@ -1,17 +1,8 @@
 import React, {Component} from 'react';
-import firebase from '../firebase';
-import Button from '../General/Button';
-import Header from './Header';
 import PageMenu from './PageMenu';
 import ListItem from './ListItem';
 
 export default class Content extends Component {
-  state={
-  }
-
-  componentDidMount(){
-    
-  }
 
   _showList = contentToShow => {
     switch(contentToShow){
@@ -30,12 +21,9 @@ export default class Content extends Component {
   }
 
   render(){
-    const {flipList, lists} = this.state;
-    const {createList, page, groupName, logout, groupInfo} = this.props;
     return(
-      <div>
+      <div className="groupContent">
         <PageMenu {...this.props}/>
-        <p>Group Main Content</p>
         {this._showList(this.props.contentToShow)}
       </div>
     )
