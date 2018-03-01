@@ -14,17 +14,18 @@ class GroupPage extends Component {
 
   _addItemToList = (newItemName, listType) => {
     const {flipList, voteList, groupInfo} = this.state;
+
     if(listType==='flip' && flipList){
       const numberOfCurrentItem = flipList.items.length;
       const newItem = {
         id: `${flipList.groupId}i${numberOfCurrentItem}`,
         name: newItemName,
-        status: false
+        status: ''
       }
       const updateItemsArray = [...flipList.items, newItem]
       const updateList = Object.assign({...flipList}, {items: updateItemsArray})
       this.setState({flipList: updateList})
-
+      console.log(groupInfo.listFlipID)
       firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(updateItemsArray)
 
     } else if(listType==='vote' && voteList){
@@ -32,7 +33,7 @@ class GroupPage extends Component {
       const newItem = {
         id: `${voteList.groupId}i${numberOfCurrentItem}`,
         name: newItemName,
-        status: []
+        status: ''
       }
       const updateItemsArray = [...voteList.items, newItem]
       const updateList = Object.assign({...voteList}, {items: updateItemsArray})
@@ -51,24 +52,49 @@ class GroupPage extends Component {
 
     if(listType==='flip' && selectedItemID){
       const itemToUpdateStatus = flipList.items[index];
-      const updatedStatus = Object.assign(itemToUpdateStatus, {status: !itemToUpdateStatus.status})
-      const itemArray = [...flipList.items];
-      itemArray.splice(index, 1, updatedStatus);
-      const updatedItemObject = Object.assign({...flipList}, {items: itemArray})
+      const updatedStatus = (itemToUpdateStatus.status ==='') 
+      ? Object.assign(itemToUpdateStatus, {status: uid})
+      : (itemToUpdateStatus.status ===uid ) 
+        ? Object.assign(itemToUpdateStatus, {status: ''})
+        : false
+
+      if(updatedStatus){
+        const itemArray = [...flipList.items];
+        itemArray.splice(index, 1, updatedStatus);
+        const updatedItemObject = Object.assign({...flipList}, {items: itemArray})
+        this.setState({flipList: updatedItemObject})
+        firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(itemArray)  
+      }
       
-      this.setState({flipList: updatedItemObject})
-      firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(itemArray)
-    
     } else if (listType==='vote' && selectedItemID){
       const itemToUpdateStatus = voteList.items[index];
-      const currentVoters = [...itemToUpdateStatus.status]
-      const voted = currentVoters.includes(uid);
-      if(voted){
-        return false;
-      } else {
-        const updatedStatus = Object.assign(itemToUpdateStatus, {status: [...currentVoters, uid]})
+      console.log(itemToUpdateStatus)
+      let updatedStatus;
+        if(itemToUpdateStatus.status==='' || itemToUpdateStatus.status===undefined){
+          updatedStatus = Object.assign(itemToUpdateStatus, {status: [uid]})
+        } else {
+          const currentVoters = [...itemToUpdateStatus.status]
+          const voted = currentVoters.includes(uid);
+          if(voted){
+            const userHasVoted = currentVoters.filter(user=>user!==uid)
+            const updatedVoters = (userHasVoted.length !==0) ? userHasVoted : "";
+            console.log(userHasVoted)
+            updatedStatus = Object.assign(itemToUpdateStatus, {status: updatedVoters})
+          } else {
+            updatedStatus = Object.assign(itemToUpdateStatus, {status: [...currentVoters, uid]})
+          }
+        }
         firebase.database().ref(`/voteLists/${groupInfo.listVoteID}/items/${index}`).set(updatedStatus)
-      }
+        const copiedList = {...voteList};
+        copiedList.items[index] = updatedStatus
+        this.setState({voteList: copiedList})
+    }
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(this.props.uid !== nextProps.uid){
+      console.log('component will receive props!!')
+      this._getGroupInfo()
     }
   }
 
@@ -76,34 +102,27 @@ class GroupPage extends Component {
     this._getGroupInfo()
   }
 
-  componentWillUpdate(nextProps){
-    if((nextProps.listFlipID !== this.props.listFlipID) || (nextProps.listVoteID !== this.props.listVoteID)){
-      this._getGroupInfo()
-    }
-  }
-
   _clickMenu = (e) => {
     this.setState({contentToShow: e.target.name})
   }
 
   _getGroupInfo = ()=>{
-    const {groupId, match} = this.props
-    const theGroupsID = (groupId) ? groupId : match.params.id;
+    const {groupId, location} = this.props
+    const theGroupsID = (groupId) ? groupId : location.pathname.substr(9);
     if(theGroupsID){
       const groupRef = firebase.database().ref(`/groups/${theGroupsID}`)
-      groupRef.once('value', info=> this.setState({groupInfo: info.val()}) )
+      groupRef.once('value', info=> {     
+        this.setState({
+          groupInfo: info.val(),
+          listFlipID: info.val().listFlipID,
+          listVoteID: info.val().listVoteID
+        })
+      })
       .then(()=>{
-        this.state.groupInfo.listFlipID!=='' && this._getFlipListInfo(this.state.groupInfo.listFlipID)
-        this.state.groupInfo.listVoteID!=='' && this._getVoteListInfo(this.state.groupInfo.listVoteID)
+        this.state.listFlipID!=='' && this._getFlipListInfo(this.state.listFlipID)
+        this.state.listVoteID!=='' && this._getVoteListInfo(this.state.listVoteID)
       })
     }
-  }
-
-  _getUpdate = () => {
-    const {listFlipID, listVoteID} = this.props;
-    firebase.database().ref(`/flipList/${listFlipID}`).on('value', snap=> console.log(snap.val()))
-    firebase.database().ref(`/voteList/${listVoteID}`).on('value', snap=> console.log(snap.val()))
-    const updateGroupInfo = {...this.state.groupInfo}
   }
 
   _getFlipListInfo = (flipID) => {

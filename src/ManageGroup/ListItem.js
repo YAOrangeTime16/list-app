@@ -22,7 +22,7 @@ class ListItem extends Component {
         if (type==='flip') {
           return status ? 'flippedItem' : 'flipItem';
         } else if (type==='vote'){
-          return (status) && status.includes(uid) ? 'votedItem' : 'voteItem';
+          return (status && status!=='') && status.includes(uid) ? 'votedItem' : 'voteItem';
         } else {
           return null;
         }
@@ -40,7 +40,8 @@ class ListItem extends Component {
               <div>
               {item.name}
               </div>
-            </li> )}
+            </li> 
+          )}
            <li className="addItem" onClick={this._showItemInput}>{openFormItem ? 'cancel' : '+ Add item'}</li> 
           <div>{openFormItem ? <AddItem addItemToList={addItemToList} type={type} closeItemInput={this._showItemInput} /> : null}</div> 
         </ul>
