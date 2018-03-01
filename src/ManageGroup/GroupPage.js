@@ -25,7 +25,6 @@ class GroupPage extends Component {
       const updateItemsArray = [...flipList.items, newItem]
       const updateList = Object.assign({...flipList}, {items: updateItemsArray})
       this.setState({flipList: updateList})
-      console.log(groupInfo.listFlipID)
       firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(updateItemsArray)
 
     } else if(listType==='vote' && voteList){
@@ -68,7 +67,6 @@ class GroupPage extends Component {
       
     } else if (listType==='vote' && selectedItemID){
       const itemToUpdateStatus = voteList.items[index];
-      console.log(itemToUpdateStatus)
       let updatedStatus;
         if(itemToUpdateStatus.status==='' || itemToUpdateStatus.status===undefined){
           updatedStatus = Object.assign(itemToUpdateStatus, {status: [uid]})
@@ -78,7 +76,6 @@ class GroupPage extends Component {
           if(voted){
             const userHasVoted = currentVoters.filter(user=>user!==uid)
             const updatedVoters = (userHasVoted.length !==0) ? userHasVoted : "";
-            console.log(userHasVoted)
             updatedStatus = Object.assign(itemToUpdateStatus, {status: updatedVoters})
           } else {
             updatedStatus = Object.assign(itemToUpdateStatus, {status: [...currentVoters, uid]})
