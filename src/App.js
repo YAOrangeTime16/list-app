@@ -32,7 +32,10 @@ class App extends Component {
     auth.onAuthStateChanged(user=>{
       if(user){
         if(user.isAnonymous){
-          return this.setState({userBelongsToThisGroupAs: 'member'})
+          return this.setState({
+            userBelongsToThisGroupAs: 'member',
+            uid: user.uid
+          })
         } else {
           this._getGroupIdsOfThisAdmin(user.uid)
           return this.setState({
@@ -97,8 +100,8 @@ class App extends Component {
       label: name,
       description: text,
       items: [
-        {name: item1, status: (type==='flip') ? false : 0, id: groupID + 'i0'},
-        {name: item2, status: (type==='flip') ? false : 0, id: groupID + 'i1'}],
+        {name: item1, status: '', id: groupID + 'i0'},
+        {name: item2, status: '', id: groupID + 'i1'}],
       groupId: groupID
     }
     //save to state?? listObject -check wifi connection
@@ -136,29 +139,49 @@ class App extends Component {
         } else {
           const hash = group.val().groupPass;
           const passOK = bcrypt.compareSync(password, hash)
+
           if(!passOK){
             this.setState({error: 'Password is wrong'}) 
           } else {
             firebase.auth().signInAnonymously().catch(e=>this.setState({error: e.message}))
-            this.setState({loggedinAsMember: true, userBelongsToThisGroupAs: 'member', groupId: groupID, error: ''})
-            //check if this groups has already lists
             const groupRef = firebase.database().ref(`/groups/${groupID}`)
-            groupRef.child('listFlipID').once('value', id=> {
-              if(id !== null) {
-                this.setState({listFlipID: id.val()})
-              }
+            groupRef.on('value', group=>
+            this.setState({
+              loggedinAsMember: true, 
+              groupId: groupID,
+              error: ''
             })
-            groupRef.child('listVoteID').once('value', id => {
-              if(id !== null) {
-                this.setState({listVoteID: id.val()})
-              }
-            })
-
-          } 
+          )
+          }
         }
       })
     }
+  }
+  
+  _getFlipListInfo = groupID => {
+    const groupRef = firebase.database().ref(`/groups/${groupID}`)
+    groupRef.child('listFlipID').once('value', id=> {
+      console.log(id.val())
+      if(id.val() !== null) {
+        firebase.database().ref(`/flipLists/${id.val()}`)
+        .on('value', list => this.setState({
+          flipList: list.val()
+        }))
+      }
+    })
+  }
 
+  _getVoteListInfo = groupID => {
+    const groupRef = firebase.database().ref(`/groups/${groupID}`)
+    groupRef.child('listVoteID').once('value', id => {
+      console.log(id.val())
+      if(id.val() !== null) {
+        firebase.database().ref(`/voteLists/${id.val()}`)
+        .on('value', list => this.setState({
+          voteList: list.val()
+        }))
+      }
+    })
   }
   
   _logoutAdmin = (cb) => {
@@ -171,6 +194,8 @@ class App extends Component {
         groups: [],
         groupId: '',
         userName: '',
+        listFlipID: '',
+        listVoteID: '',
         uid: ''})
       cb()
     })
@@ -186,6 +211,8 @@ class App extends Component {
       userBelongsToThisGroupAs: '',
       uid: '',
       userName: '',
+      listFlipID: '',
+      listVoteID: '',
       groupId: ''})
     cb()
   }
@@ -204,6 +231,8 @@ class App extends Component {
           <Route path='/groups/:id'
             render={(props)=>
               <GroupPage {...this.state} {...props}
+                getFlipListInfo={this._getFlipListInfo}
+                getVoteListInfo={this._getVoteListInfo}
                 logoutGroup={this._logoutGroup}
                 addList={this._addList} />
             }
