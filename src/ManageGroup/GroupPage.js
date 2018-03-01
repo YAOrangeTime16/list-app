@@ -150,7 +150,7 @@ class GroupPage extends Component {
             changeItemStatus={this._changeItemStatus}
             clickMenu={this._clickMenu}
             createList={this._createList}
-            getUpdate={this._getUpdate}
+            getUpdate={this._getGroupInfo}
             logoutGroup={logoutGroup} />
         <Button 
             clickAction={()=>logoutGroup(()=>history.replace('/'))}
