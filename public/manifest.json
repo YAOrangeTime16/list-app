@@ -1,11 +1,26 @@
 {
   "short_name": "List App",
-  "name": "Create and share lists with your group",
+  "name": "Share a check and a voting lists in your group",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "./images/list-app-icon-32.png",
+      "sizes": "16x16 32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "./images/list-app-icon-128.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./images/list-app-icon-256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "./images/list-app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
   "start_url": "./index.html",

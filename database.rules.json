@@ -1,0 +1,20 @@
+{
+  "rules": {
+    "groups": {
+      ".read": true,
+    	".write": "auth != null"
+    },
+    "users": {
+      ".read": "auth != null",
+    	".write": "auth != null"
+    },
+    "flipLists": {
+      ".read": "auth != null",
+    	".write": "auth != null"
+    },
+    "voteLists": {
+      ".read": "auth != null",
+    	".write": "auth != null"
+    }
+  }
+}
