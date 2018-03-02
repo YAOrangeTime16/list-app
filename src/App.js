@@ -4,6 +4,7 @@ import {
   Route
 } from 'react-router-dom';
 import firebase from './firebase';
+import localforage from 'localforage';
 import bcrypt from 'bcryptjs';
 import './App.css';
 
@@ -25,41 +26,21 @@ class App extends Component {
     listVoteID: ''
   }
 
-  //---- ComponentDidMount -----------
+  componentWillMount(){
+    localforage.config({
+      driver: [
+               localforage.INDEXEDDB,
+               localforage.LOCALSTORAGE
+              ],
+      name: 'localforage-ListApp'
+    });
 
-  _checkUserLoggedInAs = ()=> {
-    const auth = firebase.auth()
-    auth.onAuthStateChanged(user=>{
-      if(user){
-        if(user.isAnonymous){
-          return this.setState({
-            userBelongsToThisGroupAs: 'member',
-            uid: user.uid
-          })
-        } else {
-          this._getGroupIdsOfThisAdmin(user.uid)
-          return this.setState({
-            userBelongsToThisGroupAs: 'admin',
-            loggedinAsAdmin: true,
-            loggedinAsMember: false,
-            uid: user.uid,
-            userName: user.displayName || user.email })
-        }
-      }
-      return false
-    })
-  }
-
-  _getGroupIdsOfThisAdmin = uid => {
-		const groupsRef = firebase.database().ref(`/users/${uid}/myGroups`)
-		groupsRef.on('value', snap => this.setState({groups: snap.val()}))
   }
 
   componentDidMount(){
     this._checkUserLoggedInAs()
     this.setState({error: ''})
   }
-  //-------------------------------------
 
   _addGroup = (name, pw) => {
 		const { uid, groups } = this.state;
@@ -123,41 +104,42 @@ class App extends Component {
     }
   }
 
-  _getGroupId = (id) => {
-    this.setState({groupId: id})
-  }
-
-  _loginGroup = (password, groupID) => {
-    if(!password || !groupID) {
-      this.setState({error: 'Please fill in the form'})
-    } else {
-      const groupRef = firebase.database().ref(`/groups/${groupID}`);
-      groupRef.once('value', group => {
-        if(group.val() === null){
-          this.setState({error: 'There is no such a group'})
-          return false
+  _checkUserLoggedInAs = ()=> {
+    const auth = firebase.auth()
+    auth.onAuthStateChanged(user=>{
+      if(user){
+        if(user.isAnonymous){
+          //check the local DB
+          localforage.getItem('member-login').then(dbInfo=>{
+            if(dbInfo){
+              this.setState({
+                userBelongsToThisGroupAs: 'member',
+                uid: user.uid,
+                groupId: dbInfo.groupId,
+                loggedinAsMember: true
+              })
+            } else {
+              this.setState({
+                userBelongsToThisGroupAs: 'member',
+                uid: user.uid
+              })
+            }
+          })
         } else {
-          const hash = group.val().groupPass;
-          const passOK = bcrypt.compareSync(password, hash)
-
-          if(!passOK){
-            this.setState({error: 'Password is wrong'}) 
-          } else {
-            firebase.auth().signInAnonymously().catch(e=>this.setState({error: e.message}))
-            const groupRef = firebase.database().ref(`/groups/${groupID}`)
-            groupRef.on('value', group=>
-            this.setState({
-              loggedinAsMember: true, 
-              groupId: groupID,
-              error: ''
-            })
-          )
-          }
+          this._getGroupIdsOfThisAdmin(user.uid)
+          return this.setState({
+            userBelongsToThisGroupAs: 'admin',
+            loggedinAsAdmin: true,
+            loggedinAsMember: false,
+            uid: user.uid,
+            userName: user.displayName || user.email })
         }
-      })
-    }
+      } else {
+        return false
+      }
+    })
   }
-  
+
   _getFlipListInfo = groupID => {
     const groupRef = firebase.database().ref(`/groups/${groupID}`)
     groupRef.child('listFlipID').once('value', id=> {
@@ -182,6 +164,46 @@ class App extends Component {
         }))
       }
     })
+  }
+
+  _getGroupIdsOfThisAdmin = uid => {
+		const groupsRef = firebase.database().ref(`/users/${uid}/myGroups`)
+		groupsRef.on('value', snap => this.setState({groups: snap.val()}))
+  }
+
+  _getGroupId = (id) => {
+    this.setState({groupId: id})
+  }
+
+  _loginGroup = (password, groupID) => {
+    if(!password || !groupID) {
+      this.setState({error: 'Please fill in the form'})
+    } else {
+      const groupRef = firebase.database().ref(`/groups/${groupID}`);
+      groupRef.once('value', group => {
+        if(group.val() === null){
+          this.setState({error: 'There is no such a group'})
+          return false
+        } else {
+          const hash = group.val().groupPass;
+          const passOK = bcrypt.compareSync(password, hash)
+          if(!passOK){
+            this.setState({error: 'Password is wrong'}) 
+          } else {
+            firebase.auth().signInAnonymously().catch(e=>this.setState({error: e.message}))
+            const groupRef = firebase.database().ref(`/groups/${groupID}`)
+            groupRef.on('value', group=> {
+              this.setState({
+                loggedinAsMember: true, 
+                groupId: groupID,
+                error: ''
+              }) // Save groupID & loggedinAsMember to local Storage
+              localforage.setItem('member-login', {groupId: groupID, loggeinasMember: true})
+            })
+          }
+        }
+      })
+    }
   }
   
   _logoutAdmin = (cb) => {
@@ -214,6 +236,7 @@ class App extends Component {
       listFlipID: '',
       listVoteID: '',
       groupId: ''})
+    localforage.clear().then(()=>console.log('storage has been cleared!'))
     cb()
   }
 
