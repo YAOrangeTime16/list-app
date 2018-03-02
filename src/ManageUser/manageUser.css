@@ -1,6 +1,6 @@
 .admin-grouplist {
   display: grid;
-  grid-template-columns: 15% 80% 5%;
+  grid-template-columns: 10% 85% 5%;
   height: 3rem;
   width: 100%;
   font-size: 1.8em;
@@ -8,7 +8,7 @@
 
 }
 
-.admin-grouplist > a {
+.admin-grouplist > div > a {
   display: block;
   text-decoration: none;
   line-height: 3rem;
@@ -35,13 +35,72 @@
   padding-top: 3rem;
 }
 
+.modal {
+  position: absolute;
+  background-color: rgba(130, 148, 177, 0.7);
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.modal-button-wrapper {
+  position: relative;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  z-index: 20;
+}
+
+.modal-button-wrapper > button {
+  margin: 0 .5rem;
+}
+
+.modal-innerbox {
+  position: relative;
+  display: grid;
+  grid-template-rows: 7rem 2.5rem auto;
+  background-color: white;
+  border-radius: 3px;
+  margin: 4rem auto;
+  height: 30%;
+  width: 80%;
+  z-index: 15;
+}
+
+.modal-innerbox > p {
+  font-size: 1.4em;
+  padding: 1rem;
+  text-align: center;
+}
+
+.modal-innerbox-large {
+  position: relative;
+  background-color: white;
+  border-radius: 3px;
+  margin: 4rem auto;
+  height: 50%;
+  width: 80%;
+  z-index: 15;
+}
+
+.modal-form {
+  position: relative;
+  display: grid;
+  height: 100%;
+  grid-template-rows: auto 3rem auto;
+  z-index: 20;
+}
+
 .svg-arrowMenu {
   position: relative;
   top: .8em;
+  right: 0;
 }
 
 .svg-deleteicon {
   position: relative;
   top: .8em;
   left: .5em;
+  cursor: pointer;
 }

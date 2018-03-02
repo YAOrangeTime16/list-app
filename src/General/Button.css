@@ -12,6 +12,7 @@ button {
   background-color: transparent;
   color: #8568AE;
   border: solid .5px #8568AE;
+  margin-top: 1rem;
 }
 
 .btn-primary {
