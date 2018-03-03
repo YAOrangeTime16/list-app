@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import firebase from '../firebase';
+import localforage from 'localforage';
 import Button from '../General/Button';
 import Header from './Header';
 import Content from './Content';
@@ -24,7 +25,12 @@ class GroupPage extends Component {
       }
       const updateItemsArray = [...flipList.items, newItem]
       const updateList = Object.assign({...flipList}, {items: updateItemsArray})
+      //save to local
+      localforage.setItem('flip-list', updateList)
+      localforage.setItem('flip-newItem', updateItemsArray)
+      //save to sate
       this.setState({flipList: updateList})
+      //save to database
       firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(updateItemsArray)
 
     } else if(listType==='vote' && voteList){
@@ -36,8 +42,12 @@ class GroupPage extends Component {
       }
       const updateItemsArray = [...voteList.items, newItem]
       const updateList = Object.assign({...voteList}, {items: updateItemsArray})
+      //save to local
+      localforage.setItem('vote-list', updateList)
+      localforage.setItem('vote-newItem', updateItemsArray)
+      //save to state
       this.setState({voteList: updateList})
-
+      //save to database
       firebase.database().ref(`/voteLists/${groupInfo.listVoteID}/items`).set(updateItemsArray)
     } else {
       return;
@@ -81,6 +91,7 @@ class GroupPage extends Component {
             updatedStatus = Object.assign(itemToUpdateStatus, {status: [...currentVoters, uid]})
           }
         }
+        //online
         firebase.database().ref(`/voteLists/${groupInfo.listVoteID}/items/${index}`).set(updatedStatus)
         const copiedList = {...voteList};
         copiedList.items[index] = updatedStatus
@@ -104,35 +115,64 @@ class GroupPage extends Component {
   }
 
   _getGroupInfo = ()=>{
-    const {groupId, location} = this.props
-    const theGroupsID = (groupId) ? groupId : location.pathname.substr(9);
-    if(theGroupsID){
-      const groupRef = firebase.database().ref(`/groups/${theGroupsID}`)
-      groupRef.once('value', info=> {     
-        this.setState({
-          groupInfo: info.val(),
-          listFlipID: info.val().listFlipID,
-          listVoteID: info.val().listVoteID
+    //check connection
+    const connectedRef = firebase.database().ref('.info/connected');
+    connectedRef.on('value', (snap)=> {
+      if (snap.val() === false) {
+        //offline
+
+        //check the local DB
+        localforage.getItem('flip-list').then(flipInfo=>{
+          flipInfo && this.setState({flipList: flipInfo})
         })
-      })
-      .then(()=>{
-        this.state.listFlipID!=='' && this._getFlipListInfo(this.state.listFlipID)
-        this.state.listVoteID!=='' && this._getVoteListInfo(this.state.listVoteID)
-      })
-    }
+        localforage.getItem('vote-list').then(voteInfo=>{
+          voteInfo && this.setState({voteList: voteInfo})
+        })
+
+      } else {
+        const {groupId, location} = this.props
+        const theGroupsID = (groupId) ? groupId : location.pathname.substr(9);
+        //online
+        if(theGroupsID){
+          const groupRef = firebase.database().ref(`/groups/${theGroupsID}`)
+          groupRef.once('value', info=> {
+            const groupInformation = {
+              groupInfo: info.val(),
+              listFlipID: info.val().listFlipID,
+              listVoteID: info.val().listVoteID
+            }
+
+            localforage.setItem('groupInfo', groupInformation)
+            this.setState(groupInformation)
+          })
+          .then(()=>{
+            this.state.listFlipID!=='' && this._getFlipListInfo(this.state.listFlipID)
+            this.state.listVoteID!=='' && this._getVoteListInfo(this.state.listVoteID)
+          })
+        }
+      }
+    }) 
   }
 
   _getFlipListInfo = (flipID) => {
     if(flipID){
       firebase.database().ref(`/flipLists/${flipID}`)
-      .on('value', list => this.setState({flipList: list.val()}))
+      .on('value', list => {
+        const fliplist = list.val()
+        localforage.setItem('flip-list', fliplist)
+        this.setState({flipList: fliplist})
+      })
     }
   }
 
   _getVoteListInfo = (voteID) => {
     if(voteID){
       firebase.database().ref(`/voteLists/${voteID}`)
-      .on('value', list => this.setState({voteList: list.val()}))
+      .on('value', list => {
+        const votelist = list.val()
+        localforage.setItem('vote-list', votelist)
+        this.setState({voteList: votelist})
+      })
     }
   }
 

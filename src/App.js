@@ -106,38 +106,61 @@ class App extends Component {
 
   _checkUserLoggedInAs = ()=> {
     const auth = firebase.auth()
-    auth.onAuthStateChanged(user=>{
-      if(user){
-        if(user.isAnonymous){
-          //check the local DB
-          localforage.getItem('member-login').then(dbInfo=>{
-            if(dbInfo){
-              this.setState({
-                userBelongsToThisGroupAs: 'member',
-                uid: user.uid,
-                groupId: dbInfo.groupId,
-                loggedinAsMember: true
+    
+    const connectedRef = firebase.database().ref('.info/connected');
+      connectedRef.on('value', (snap)=> {
+      if (snap.val() === false) {
+        console.log('offline');
+
+        //check the local DB
+        const uid = localStorage.getItem('uid')
+        localforage.getItem('member-login').then(dbInfo=>{
+          if(dbInfo){
+            this.setState({
+              userBelongsToThisGroupAs: 'member',
+              uid: uid,
+              groupId: dbInfo.groupId,
+              loggedinAsMember: true
+            })
+          }
+        })
+
+      } else {
+        console.log('online');
+        auth.onAuthStateChanged(user=>{
+          if(user){
+            if(user.isAnonymous){
+              //check the local DB
+              localforage.getItem('member-login').then(dbInfo=>{
+                if(dbInfo){
+                  this.setState({
+                    userBelongsToThisGroupAs: 'member',
+                    uid: user.uid,
+                    groupId: dbInfo.groupId,
+                    loggedinAsMember: true
+                  })
+                } else {
+                  this.setState({
+                    userBelongsToThisGroupAs: 'member',
+                    uid: user.uid
+                  })
+                }
               })
             } else {
-              this.setState({
-                userBelongsToThisGroupAs: 'member',
-                uid: user.uid
-              })
+              this._getGroupIdsOfThisAdmin(user.uid)
+              return this.setState({
+                userBelongsToThisGroupAs: 'admin',
+                loggedinAsAdmin: true,
+                loggedinAsMember: false,
+                uid: user.uid,
+                userName: user.displayName || user.email })
             }
-          })
-        } else {
-          this._getGroupIdsOfThisAdmin(user.uid)
-          return this.setState({
-            userBelongsToThisGroupAs: 'admin',
-            loggedinAsAdmin: true,
-            loggedinAsMember: false,
-            uid: user.uid,
-            userName: user.displayName || user.email })
-        }
-      } else {
-        return false
+          } else {
+            return false
+          }
+        })
       }
-    })
+    });
   }
 
   _getFlipListInfo = groupID => {
@@ -219,6 +242,7 @@ class App extends Component {
         listFlipID: '',
         listVoteID: '',
         uid: ''})
+      localforage.clear().then(()=>console.log('storage has been cleared!'))
       cb()
     })
     .catch(e=>this.setState({error: e.message}))
