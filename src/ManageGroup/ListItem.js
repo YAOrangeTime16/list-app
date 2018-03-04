@@ -61,7 +61,10 @@ class ListItem extends Component {
     return (
       <div>
         <div>
-          <p className="description">{type ==='flip' ? flipList.description : type==='vote' ? voteList.description : null}</p>
+          <div className="description">
+            <p>{type ==='flip' ? flipList.description : type==='vote' ? voteList.description : null}</p>
+            <p className="note">{type ==='flip' && 'Here, you can choose only one item.'}</p>
+          </div>
           { type==='flip' ? this._renderItems(flipList.items) : type==='vote' ? this._renderItems(voteList.items) : null}
         </div>
       </div>

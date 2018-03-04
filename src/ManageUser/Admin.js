@@ -40,8 +40,7 @@ export default class Admin extends Component {
 						<div onClick={()=>getGroupId(group.groupId)}>
 							<Link to={{
 											pathname: '/groups/admin',
-											search: `?groupID=${group.groupId}`,
-											state: { loggedinGroup: true }
+											search: `?groupID=${group.groupId}`
 										}}
 							>{group.groupName}</Link>
 						</div>

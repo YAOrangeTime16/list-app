@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cra-append-sw": "^2.1.1",
     "firebase": "^4.9.1",
     "localforage": "^1.5.7",
     "react": "^16.2.0",
@@ -13,7 +14,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "dev": "react-scripts build && cra-append-sw --mode dev ./src/listapp-sw.js",
+    "build": "react-scripts build && cra-append-sw ./src/listapp-sw.js",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
