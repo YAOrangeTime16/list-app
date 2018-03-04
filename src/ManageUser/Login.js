@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component} from 'react';
 import firebase from '../firebase';
 import {Link} from 'react-router-dom';
 import Button from '../General/Button';

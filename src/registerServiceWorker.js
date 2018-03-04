@@ -31,7 +31,6 @@ export default function register() {
 
     window.addEventListener('load', () => {
       const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
-      //const swUrl = 'listapp-sw.js'
       if (isLocalhost) {
         // This is running on localhost. Lets check if a service worker still exists or not.
         checkValidServiceWorker(swUrl);
@@ -43,7 +42,6 @@ export default function register() {
             'This web app is being served cache-first by a service ' +
               'worker. To learn more, visit https://goo.gl/SC7cgQ'
           );
-          return swRegistration.sync.register('myFirstSync');
         })
       } else {
         // Is not local host. Just register service worker
@@ -80,6 +78,10 @@ function registerValidSW(swUrl) {
     .catch(error => {
       console.error('Error during service worker registration:', error);
     });
+    navigator.serviceWorker.ready.then((swRegistration) => {
+      swRegistration.sync.register('updateNewItemFlip');
+      swRegistration.sync.register('updateNewItemVote');
+    })
 }
 
 function checkValidServiceWorker(swUrl) {
