@@ -1,6 +1,6 @@
 .admin-grouplist {
   display: grid;
-  grid-template-columns: 10% 85% 5%;
+  grid-template-columns: 10% 55% 5% 30%;
   height: 3rem;
   width: 100%;
   font-size: 1.8em;
@@ -20,6 +20,21 @@
   font-size: 1.6em;
   text-align: center;
   height: 1rem;
+}
+
+.icon-statics {
+  cursor: pointer;
+  background: rgb(174, 104, 139);
+  border-radius: 3px;
+  height: 1.5rem;
+  width: 3em;
+  line-height: 1.5rem;
+  color: white;
+  font-size: .8em;
+  padding: .3em 1em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: .5rem;
 }
 
 .logout-admin {
