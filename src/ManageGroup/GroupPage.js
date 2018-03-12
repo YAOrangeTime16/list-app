@@ -155,9 +155,10 @@ class GroupPage extends Component {
         if(theGroupsID){
           const groupRef = firebase.database().ref(`/groups/${theGroupsID}`)
           groupRef.once('value', info=> {
-            loggedinAsAdmin 
+            /*loggedinAsAdmin 
             ? localforage.setItem(`admin-Group${theGroupsID}`, info.val())
             : localforage.setItem('group-info', info.val())
+            */
             this.setState({groupInfo: info.val()})
           })
           .then(()=>{
