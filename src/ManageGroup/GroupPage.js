@@ -129,27 +129,27 @@ class GroupPage extends Component {
   }
 
   _getGroupInfo = ()=>{
-    const {loggedinAsAdmin, loggedinAsMember} = this.props;
     //check connection
     const connectedRef = firebase.database().ref('.info/connected');
-    connectedRef.on('value', (snap)=> {
+    connectedRef.on('value', snap=> {
       if (snap.val() === false) { //offline
-        if(loggedinAsMember){
-          //check the local DB
-          localforage.getItem('group-flip').then(flipInfo=>{
-            flipInfo && this.setState({flipList: flipInfo})
-          })
-          localforage.getItem('group-vote').then(voteInfo=>{
-            voteInfo && this.setState({voteList: voteInfo})
-          })
-          localforage.getItem('group-info').then(groupInfo=>{
-            groupInfo && this.setState({groupInfo})
-          })
-        } else {
+        localforage.getItem('group-login').then(status => {
+          if(status.loggeinasMember){
+            //check the local DB
+            localforage.getItem('group-flip').then(flipInfo=>{
+              flipInfo && this.setState({flipList: flipInfo})
+            })
+            localforage.getItem('group-vote').then(voteInfo=>{
+              voteInfo && this.setState({voteList: voteInfo})
+            })
+            localforage.getItem('group-info').then(groupInfo=>{
+              groupInfo && this.setState({groupInfo})
+            })
+          }
+        })
 
-        }
       } else {
-        const {groupId, location} = this.props
+        const {groupId, location,loggedinAsAdmin, loggedinAsMember} = this.props;
         const theGroupsID = (groupId) ? groupId : location.pathname.substr(8);
         //online
         if(theGroupsID){

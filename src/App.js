@@ -73,6 +73,7 @@ class App extends Component {
   }
   
   _addList = (groupID, name, text, item1, item2, type) => {
+
     const listObject = {
       label: name,
       description: text,
@@ -81,10 +82,9 @@ class App extends Component {
         {name: item2, status: '', id: groupID + 'i1'}],
       groupId: groupID
     }
-    //save to state?? listObject -check wifi connection
     if(type==='flip'){
       //save local
-      
+      localforage.setItem('admin-flip-newlist', listObject)
       //save database
       firebase.database().ref(`/flipLists`).push(listObject)
       .then(list=>{
@@ -101,6 +101,9 @@ class App extends Component {
     .catch(e=>console.log(e.message))
     }
   }
+
+  _changeToOffline = () => this.setState({offline: true})
+  _changeToOnline = () => this.setState({offline: false})
 
   _checkUserLoggedInAs = ()=> {
     const connectedRef = firebase.database().ref('.info/connected');
@@ -121,7 +124,7 @@ class App extends Component {
           })
         } else {
           localforage.getItem('admin-login').then(dbInfo=>{
-            const displayName = localStorage.getItem('disokayName')
+            const displayName = localStorage.getItem('displayName')
             const email = localStorage.getItem('email')
             dbInfo && this.setState({
                         uid: uid,
@@ -148,7 +151,8 @@ class App extends Component {
                 } else {
                   this.setState({
                     userBelongsToThisGroupAs: 'member',
-                    uid: user.uid
+                    uid: user.uid,
+                    loggedinAsMember: true
                   })
                 }
               })
@@ -225,12 +229,16 @@ class App extends Component {
         if(connection.val() === false){
           //offline
           const localGroupID = localforage.getItem('group-login').then( info=>{
-            const hash = info.hashedPass
-            const passOK = bcrypt.compareSync(password, hash)
-            if( (info.groupId === groupID) && passOK ){
-              this.setState({loggedinAsMember: true, groupId: groupID, error: ''})
-            } else {
-              this.setState({error: 'Confirm ID or Password, otherwise try again when the device is online'})
+            if(!info){
+              this.setState({error: 'You have to be online to login'})
+            } else if(info){
+              const hash = info.hashedPass
+              const passOK = bcrypt.compareSync(password, hash)
+              if( (info.groupId === groupID) && passOK ){
+                return this.setState({loggedinAsMember: true, groupId: groupID, error: '', offline: true})
+              } else {
+                return this.setState({error: 'Confirm ID or Password, otherwise try again when the device is online'})
+              }
             }
           })
         } else if(connection.val()){
@@ -238,13 +246,13 @@ class App extends Component {
           const groupRef = firebase.database().ref(`/groups/${groupID}`);
           groupRef.once('value', group => {
             if(group.val() === null){
-              this.setState({error: 'There is no such a group'})
+              this.setState({error: 'There is no such a group', offline: false})
               return false
             } else {
               const hash = group.val().groupPass;
               const passOK = bcrypt.compareSync(password, hash)
               if(!passOK){
-                this.setState({error: 'Password is wrong'}) 
+                this.setState({error: 'Password is wrong', offline: false}) 
               } else {
                 //everything is ready for login
                 firebase.auth().signInAnonymously().catch(e=>this.setState({error: e.message}))
@@ -253,7 +261,8 @@ class App extends Component {
                   this.setState({
                     loggedinAsMember: true, 
                     groupId: groupID,
-                    error: ''
+                    error: '',
+                    offline: false
                   })
                   // Save login info to indexedDB
                   localforage.setItem('group-login', {groupId: groupID, loggeinasMember: true, hashedPass: hash})
@@ -287,17 +296,20 @@ class App extends Component {
 
   _logoutGroup = (cb) =>{
     firebase.auth().signOut()
-    this.setState({
-      groups: [],
-      loggedinAsMember: false,
-      userBelongsToThisGroupAs: '',
-      uid: '',
-      userName: '',
-      listFlipID: '',
-      listVoteID: '',
-      groupId: ''})
-    localforage.clear().then(()=>console.log('storage has been cleared!'))
-    cb()
+    .then(()=>{
+      this.setState({
+        groups: [],
+        loggedinAsMember: false,
+        userBelongsToThisGroupAs: '',
+        uid: '',
+        userName: '',
+        listFlipID: '',
+        listVoteID: '',
+        groupId: ''})
+      localforage.clear().then(()=>console.log('storage has been cleared!'))
+      cb()
+    })
+    .catch(e=>this.setState({error: e.message}))
   }
 
   render(){
