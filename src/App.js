@@ -101,9 +101,6 @@ class App extends Component {
     }
   }
 
-  _changeToOffline = () => this.setState({offline: true})
-  _changeToOnline = () => this.setState({offline: false})
-
   _checkUserLoggedInAs = ()=> {
     const connectedRef = firebase.database().ref('.info/connected');
     connectedRef.on('value', connection=> {
@@ -121,20 +118,19 @@ class App extends Component {
                     loggedinAsMember: true
                 })
               })
+            } else {
+              localforage.getItem('admin-login').then(dbInfo=>{
+                localforage.getItem('user').then( user => {
+                  dbInfo && this.setState({
+                    uid: user.uid,
+                    loggedinAsAdmin: true,
+                    userName: user.displayName || user.email
+                  })
+                }) 
+              })
             }
-          } else {
-            localforage.getItem('admin-login').then(dbInfo=>{
-              localforage.getItem('user').then( user => {
-                dbInfo && this.setState({
-                  uid: user.uid,
-                  loggedinAsAdmin: true,
-                  userName: user.displayName || user.email
-                })
-              }) 
-            })
-          } 
+          }
         })
-  
       } else if(connection.val()) {
         const auth = firebase.auth()
         console.log('online');
@@ -151,16 +147,9 @@ class App extends Component {
                     groupId: dbInfo.groupId,
                     loggedinAsMember: true
                   })
-                } else {
-                  this.setState({
-                    userBelongsToThisGroupAs: 'member',
-                    uid: user.uid,
-                    loggedinAsMember: true
-                  })
                 }
               })
-            } else { //User == admin
-              
+            } else { //User == admin   
               this._getGroupIdsOfThisAdmin(user.uid)
               const adminInfo= {
                 userBelongsToThisGroupAs: 'admin',
@@ -172,6 +161,13 @@ class App extends Component {
               localforage.iterate((value, key)=>{
                 if(key.includes('group-')){
                   localforage.removeItem(key)
+                }
+              })
+              localforage.iterate((value, key)=>{
+                if(key.includes('user')){
+                  if(value.loggedinAsMember){
+                    localforage.remoteItem('user')
+                  }
                 }
               })
               localforage.setItem('user', {...adminInfo, isAnonymous: false});
@@ -231,7 +227,7 @@ class App extends Component {
     connectedRef.on('value', connection=> {
       if(connection.val() === false){
         //offline
-        const localGroupID = localforage.getItem('group-login').then( info=>{
+        localforage.getItem('group-login').then( info=>{
           if(!info){
             this.setState({error: 'You have to be online to login'})
           } else if(info){
@@ -262,7 +258,7 @@ class App extends Component {
                 const groupRef = firebase.database().ref(`/groups/${groupID}`)
                 groupRef.on('value', group=> {
                   // Save login info to indexedDB
-                  localforage.setItem('group-login', {groupId: groupID, loggeinasMember: true, hashedPass: hash})
+                  localforage.setItem('group-login', {groupId: groupID, loggeinasMember: true, hashedPass: hash})                  
                   localforage.setItem('group-info', group.val())
                   return this.setState({
                     loggedinAsMember: true, 
