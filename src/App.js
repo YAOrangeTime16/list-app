@@ -286,7 +286,7 @@ class App extends Component {
         listFlipID: '',
         listVoteID: '',
         uid: ''})
-      localforage.clear().then(()=>console.log('storage has been cleared!'))
+      localforage.clear().then(()=>console.log('storage has been cleared!')).catch(e=>console.log(e.message))
       cb()
     })
     .catch(e=>this.setState({error: e.message}))
@@ -304,7 +304,7 @@ class App extends Component {
         listFlipID: '',
         listVoteID: '',
         groupId: ''})
-      localforage.clear().then(()=>console.log('storage has been cleared!'))
+      localforage.clear().then(()=>console.log('storage has been cleared!')).catch(e=>console.log(e.message))
       cb()
     })
     .catch(e=>this.setState({error: e.message}))

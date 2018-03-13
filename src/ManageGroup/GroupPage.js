@@ -152,9 +152,11 @@ class GroupPage extends Component {
             }
           } else {
             const currentGroupID = (this.props.location.pathname === '/groups/admin') && this.props.location.search.substr(9)
-            localforage.iterate((value, key) => 
-              key.includes('admin-Group') && value
-            )
+            localforage.iterate((value, key) => {
+              if(key.includes(`admin-Group${currentGroupID}`)){
+                return value
+              }
+            })
             .then(val=>{
               localforage.getItem(`adminGroup${currentGroupID}-flip`).then(flipInfo=>{
                 flipInfo && this.setState({flipList: flipInfo})
@@ -170,7 +172,7 @@ class GroupPage extends Component {
 
       } else {
         //online
-        const {groupId, location,loggedinAsAdmin, loggedinAsMember} = this.props;
+        const {groupId, loggedinAsAdmin} = this.props;
         const thisGroupID = groupId && groupId //: location.pathname.substr(8);
         
         if(thisGroupID){
@@ -190,7 +192,7 @@ class GroupPage extends Component {
   }
 
   _getFlipListInfo = (flipID, groupID) => {
-    const {loggedinAsAdmin, loggedinAsMember} = this.props;
+    const {loggedinAsAdmin} = this.props;
     if(flipID !==''){
       firebase.database().ref(`/flipLists/${flipID}`)
       .on('value', list => {
@@ -203,7 +205,7 @@ class GroupPage extends Component {
   }
 
   _getVoteListInfo = (voteID, groupID) => {
-    const {loggedinAsAdmin, loggedinAsMember} = this.props;
+    const {loggedinAsAdmin} = this.props;
     if(voteID !==''){
       firebase.database().ref(`/voteLists/${voteID}`)
       .on('value', list => {
