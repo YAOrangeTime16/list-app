@@ -21,7 +21,6 @@ class App extends Component {
     listVoteID: '',
     loggedinAsAdmin: false,
     loggedinAsMember: false,
-    offline: false,
     uid: '',
     userName: '',
     userBelongsToThisGroupAs: '',
@@ -73,6 +72,7 @@ class App extends Component {
   }
   
   _addList = (groupID, name, text, item1, item2, type) => {
+
     const listObject = {
       label: name,
       description: text,
@@ -81,10 +81,9 @@ class App extends Component {
         {name: item2, status: '', id: groupID + 'i1'}],
       groupId: groupID
     }
-    //save to state?? listObject -check wifi connection
     if(type==='flip'){
       //save local
-      
+      localforage.setItem('admin-flip-newlist', listObject)
       //save database
       firebase.database().ref(`/flipLists`).push(listObject)
       .then(list=>{
@@ -108,34 +107,37 @@ class App extends Component {
       if (connection.val() === false) {
         console.log('offline');
         //check the local DB
-        const uid = localStorage.getItem('uid')
-        const isAnonymous = localStorage.getItem('isAnonymous')
-        if(isAnonymous){
-          localforage.getItem('group-login').then(dbInfo=>{
-            dbInfo && this.setState({
-                        userBelongsToThisGroupAs: 'member',
-                        uid: uid,
-                        groupId: dbInfo.groupId,
-                        loggedinAsMember: true
-                      })
-          })
-        } else {
-          localforage.getItem('admin-login').then(dbInfo=>{
-            const displayName = localStorage.getItem('disokayName')
-            const email = localStorage.getItem('email')
-            dbInfo && this.setState({
-                        uid: uid,
-                        loggedinAsAdmin: true,
-                        userName: displayName || email
-            })
-          })
-        }   
+        localforage.getItem('user').then(user => {
+          if(user){
+            if(user.isAnonymous){
+              localforage.getItem('group-login').then(dbInfo=>{
+                dbInfo && this.setState({
+                    userBelongsToThisGroupAs: 'member',
+                    uid: user.uid,
+                    groupId: dbInfo.groupId,
+                    loggedinAsMember: true
+                })
+              })
+            } else {
+              localforage.getItem('admin-login').then(dbInfo=>{
+                localforage.getItem('user').then( user => {
+                  dbInfo && this.setState({
+                    uid: user.uid,
+                    loggedinAsAdmin: true,
+                    userName: user.displayName || user.email
+                  })
+                }) 
+              })
+            }
+          }
+        })
       } else if(connection.val()) {
         const auth = firebase.auth()
         console.log('online');
         auth.onAuthStateChanged(user=>{
           if(user){
             if(user.isAnonymous){
+              localforage.setItem('user', {uid: user.uid, isAnonymous: true});
               //check the local DB
               localforage.getItem('group-login').then(dbInfo=>{
                 if(dbInfo){
@@ -145,14 +147,9 @@ class App extends Component {
                     groupId: dbInfo.groupId,
                     loggedinAsMember: true
                   })
-                } else {
-                  this.setState({
-                    userBelongsToThisGroupAs: 'member',
-                    uid: user.uid
-                  })
                 }
               })
-            } else { //User == admin
+            } else { //User == admin   
               this._getGroupIdsOfThisAdmin(user.uid)
               const adminInfo= {
                 userBelongsToThisGroupAs: 'admin',
@@ -166,6 +163,14 @@ class App extends Component {
                   localforage.removeItem(key)
                 }
               })
+              localforage.iterate((value, key)=>{
+                if(key.includes('user')){
+                  if(value.loggedinAsMember){
+                    localforage.remoteItem('user')
+                  }
+                }
+              })
+              localforage.setItem('user', {...adminInfo, isAnonymous: false});
               localforage.setItem('admin-login', adminInfo)
               return this.setState(adminInfo)
             }
@@ -217,23 +222,25 @@ class App extends Component {
   _loginGroup = (password, groupID) => {
     if(!password || !groupID) {
       this.setState({error: 'Please fill in the form'})
-
-    } else {
-
-      const connectedRef = firebase.database().ref('.info/connected');
-      connectedRef.on('value', connection=> {
-        if(connection.val() === false){
-          //offline
-          const localGroupID = localforage.getItem('group-login').then( info=>{
+    }
+    const connectedRef = firebase.database().ref('.info/connected');
+    connectedRef.on('value', connection=> {
+      if(connection.val() === false){
+        //offline
+        localforage.getItem('group-login').then( info=>{
+          if(!info){
+            this.setState({error: 'You have to be online to login'})
+          } else if(info){
             const hash = info.hashedPass
             const passOK = bcrypt.compareSync(password, hash)
             if( (info.groupId === groupID) && passOK ){
-              this.setState({loggedinAsMember: true, groupId: groupID, error: ''})
+              return this.setState({loggedinAsMember: true, groupId: groupID, error: ''})
             } else {
-              this.setState({error: 'Confirm ID or Password, otherwise try again when the device is online'})
+              return this.setState({error: 'Confirm ID or Password, otherwise try again when the device is online'})
             }
-          })
-        } else if(connection.val()){
+          }
+        })
+      } else if(connection.val()){
           //online
           const groupRef = firebase.database().ref(`/groups/${groupID}`);
           groupRef.once('value', group => {
@@ -250,22 +257,22 @@ class App extends Component {
                 firebase.auth().signInAnonymously().catch(e=>this.setState({error: e.message}))
                 const groupRef = firebase.database().ref(`/groups/${groupID}`)
                 groupRef.on('value', group=> {
-                  this.setState({
+                  // Save login info to indexedDB
+                  localforage.setItem('group-login', {groupId: groupID, loggeinasMember: true, hashedPass: hash})                  
+                  localforage.setItem('group-info', group.val())
+                  return this.setState({
                     loggedinAsMember: true, 
-                    groupId: groupID,
+                    groupId: group.val().groupUrl,
                     error: ''
                   })
-                  // Save login info to indexedDB
-                  localforage.setItem('group-login', {groupId: groupID, loggeinasMember: true, hashedPass: hash})
                 })
               }
             }
           })
         }
       })
-    }
   }
-  
+
   _logoutAdmin = (cb) => {
     firebase.auth().signOut()
     .then(()=>{
@@ -279,7 +286,7 @@ class App extends Component {
         listFlipID: '',
         listVoteID: '',
         uid: ''})
-      localforage.clear().then(()=>console.log('storage has been cleared!'))
+      localforage.clear().then(()=>console.log('storage has been cleared!')).catch(e=>console.log(e.message))
       cb()
     })
     .catch(e=>this.setState({error: e.message}))
@@ -287,17 +294,20 @@ class App extends Component {
 
   _logoutGroup = (cb) =>{
     firebase.auth().signOut()
-    this.setState({
-      groups: [],
-      loggedinAsMember: false,
-      userBelongsToThisGroupAs: '',
-      uid: '',
-      userName: '',
-      listFlipID: '',
-      listVoteID: '',
-      groupId: ''})
-    localforage.clear().then(()=>console.log('storage has been cleared!'))
-    cb()
+    .then(()=>{
+      this.setState({
+        groups: [],
+        loggedinAsMember: false,
+        userBelongsToThisGroupAs: '',
+        uid: '',
+        userName: '',
+        listFlipID: '',
+        listVoteID: '',
+        groupId: ''})
+      localforage.clear().then(()=>console.log('storage has been cleared!')).catch(e=>console.log(e.message))
+      cb()
+    })
+    .catch(e=>this.setState({error: e.message}))
   }
 
   render(){
