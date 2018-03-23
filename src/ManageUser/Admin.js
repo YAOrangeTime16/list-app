@@ -153,7 +153,7 @@ export default class Admin extends Component {
 							{ deleteConfirm ? 
 								<div className="modal">
 									<div className="modal-innerbox">
-										<p>Delete this group? Deletion cannot be undone. All lists to this group are also deleted. (this function is not available at the moment)</p>
+										<p>Delete this group? Deletion cannot be undone. All lists to this group are also deleted.</p>
 										<div className="modal-button-wrapper">
 											<Button clickAction={()=>this.setState({deleteConfirm: false, groupToDelete: ''})} title="Cancel" className="btn-secondary" />
 											<Button 
