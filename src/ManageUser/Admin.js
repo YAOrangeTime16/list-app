@@ -12,16 +12,43 @@ export default class Admin extends Component {
 		createGroup: false,
 		deleteConfirm: false,
 		groupToDelete: '',
-		openStatics: false,
+		openStats: false,
 		statsFlip: '',
 		statsVote: '',
-		offlineMessage: ''
+		offlineMessage: '',
+		showGroupID: ''
 	}
 
 	_deleteTheGroup = groupid => {
 		const {uid} = this.props;
-		firebase.database().ref(`/groups/${groupid}`)
-		firebase.database().ref(`/users/${uid}/myGroups`)
+		firebase.database().ref(`/groups/${groupid}`).remove()
+		firebase.database().ref(`/flipLists`).on('value', flips => {
+			if(flips){
+				for( let item in flips.val()){
+					if(flips.val()[item].groupId === groupid){
+						firebase.database().ref(`/flipLists/${item}`).remove()
+					}
+				}
+			}
+		});
+
+		firebase.database().ref(`/voteLists`).on('value', votes => {
+			if(votes){
+				for( let item in votes.val()){
+					if(votes.val()[item].groupId === groupid){
+						firebase.database().ref(`/voteLists/${item}`).remove()
+					}
+				}
+			}
+		});
+
+		firebase.database().ref(`/users/${uid}/myGroups`).on('value', groups=>{
+			groups.val().filter((group, index)=>{
+				if(groupid === group.groupId){
+					firebase.database().ref(`/users/${uid}/myGroups`).child(index).remove()
+				}
+			})
+		})
 		console.log('delete!')
 	}
 
@@ -32,7 +59,7 @@ export default class Admin extends Component {
 	_openCreatePage = () => this.setState({createGroup: true})
 	_cancelCreatePage = () => this.setState({createGroup: false})
 
-	_openStatics = groupID => {
+	_openStats = groupID => {
 		firebase.database().ref('.info/connected')
 		.on('value', snap =>{
 			if(snap.val()===false){
@@ -54,9 +81,10 @@ export default class Admin extends Component {
 					}
 				})
 		})
-		this.setState({openStatics: true})
+		this.setState({openStats: true, showGroupID: groupID})
 	}
-	_closeStatics = () => this.setState({openStatics: false, offlineMessage: ''})
+
+	_closeStats = () => this.setState({openStats: false, offlineMessage: '', statsFlip: '', statsVote: ''})
 	
 	_renderGroupList = groupArray => {
 		const {getGroupId} = this.props;
@@ -74,8 +102,8 @@ export default class Admin extends Component {
 								>{group.groupName}</Link>
 							</div>
 							<ArrowMenu />
-							<div onClick={()=>this._openStatics(group.groupId)}>
-								<div className="icon-statics">Statics</div>
+							<div onClick={()=>this._openStats(group.groupId)}>
+								<div className="icon-stats">STATS</div>
 							</div>
 					</li>
 					)
@@ -94,27 +122,27 @@ export default class Admin extends Component {
 			{items.map( item => <li key={item.id}>{item.name}: {item.status ==='' ? '0' : item.status.length}</li> )}
 		</div>
 	)
-	
 
 	render(){
-		const {createGroup, deleteConfirm, groupToDelete, offlineMessage, statsFlip, statsVote} = this.state;
+		const {createGroup, deleteConfirm, groupToDelete, offlineMessage, statsFlip, statsVote, showGroupID} = this.state;
 		const {addGroup, groups, userName} = this.props;
 		return (
 			<div>
 				<h3>Logged in as: {userName}</h3>
-				{ this.state.openStatics && 
+				{ this.state.openStats && 
 							<div className="modal">
 								<div className="modal-innerbox-large">
 								{ offlineMessage
 									? <div>{offlineMessage}</div>
-									: (<div>
+									: (<div className="modal-stats-text">
 											<div>List Title (flip): {statsFlip.label || 'no list'}</div>
 											<ul>{statsFlip.items && this._renderFlipResult(statsFlip.items)}</ul>
 											<div>List Title (vote): {statsVote.label || 'no list'}</div>
 											<ul>{statsVote.items && this._renderVoteResult(statsVote.items)}</ul>
+											<div>Group ID: {showGroupID}</div>
 										</div>)
 								}
-									<Button clickAction={this._closeStatics} title="Close"/>
+									<Button clickAction={this._closeStats} title="Close"/>
 								</div>
 							</div>
 				}
