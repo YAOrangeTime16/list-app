@@ -25,3 +25,13 @@ button {
 .btn-wide {
   width: 60%;
 }
+
+.btn-circle {
+  position: absolute;
+  right: 1rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  margin: 1rem;
+  color: #8492A6;
+}

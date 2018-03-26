@@ -15,6 +15,11 @@
   width: 100%;
 }
 
+.border-bottom {
+  border: none;
+  border-bottom: solid .5px rgba(130, 104, 174, 0.7);
+}
+
 .error-text {
   color: red;
   font-size: 1.6em;
@@ -52,7 +57,7 @@
 
 .modal {
   position: absolute;
-  background-color: rgba(130, 148, 177, 0.7);
+  background-color: rgba(130, 104, 174, 0.9);;
   height: 100%;
   width: 100%;
   top: 0;
