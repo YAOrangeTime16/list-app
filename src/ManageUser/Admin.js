@@ -43,11 +43,13 @@ export default class Admin extends Component {
 		});
 
 		firebase.database().ref(`/users/${uid}/myGroups`).on('value', groups=>{
-			groups.val().filter((group, index)=>{
-				if(groupid === group.groupId){
-					firebase.database().ref(`/users/${uid}/myGroups`).child(index).remove()
-				}
-			})
+			if(groups.val()!==null){
+				groups.val().filter((group, index)=>{
+					if(groupid === group.groupId){
+						firebase.database().ref(`/users/${uid}/myGroups`).child(index).remove()
+					}
+				})
+			}
 		})
 		console.log('delete!')
 	}

@@ -1,0 +1,19 @@
+.message-input-form {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 90% auto;
+  position: fixed;
+  bottom: 2rem;
+}
+.message-input {
+  margin-left: 1rem;
+}
+
+.chat-area {
+  font-size: 2.2em;
+  width: 100%;
+}
+
+.svg-sendicon {
+  cursor: pointer;
+}

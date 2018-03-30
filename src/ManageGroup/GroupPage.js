@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import firebase from '../firebase';
 import localforage from 'localforage';
-import Button from '../General/Button';
 import Header from './Header';
 import Content from './Content';
 
@@ -230,10 +229,6 @@ class GroupPage extends Component {
             createList={this._createList}
             getUpdate={this._getGroupInfo}
             logoutGroup={logoutGroup} />
-        <Button 
-            clickAction={()=>logoutGroup(()=>history.replace('/'))}
-            title="logout from group"
-            className="btn-secondary logout-group" />
       </div>
     )
   }
