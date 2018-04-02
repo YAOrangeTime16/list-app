@@ -32,11 +32,11 @@ export default class CreateGroup extends Component {
     return(
       <div className="modal">
         <div className="modal-innerbox-large">
-          <form onSubmit={e=>e.preventDefault()}>
-            <Button
+          <Button
               clickAction={cancelCreatePage}
               title="X"
               className="btn-circle" />
+          <form onSubmit={e=>e.preventDefault()}>
             <input name="groupName" value={groupName} onChange={this._setValue} type="text" placeholder="Group Name" className="border-bottom" />
             <input name="groupPassword" value={groupPassword} onChange={this._setValue} type="password" placeholder="Group Password" className="border-bottom" />
             <input name="confirmPass" value={confirmPass} onChange={this._setValue} type="password" placeholder="Confirm Group Password" className="border-bottom" />

@@ -16,22 +16,23 @@ class GroupPage extends Component {
     const {flipList, voteList, groupInfo} = this.state;
 
     if(listType==='flip' && flipList){
-      const numberOfCurrentItem = flipList.items.length;
-      const newItem = {
-        id: `${flipList.groupId}i${numberOfCurrentItem}`,
-        name: newItemName,
-        status: ''
+      if(newItemName !==''){
+        const numberOfCurrentItem = flipList.items.length;
+        const newItem = {
+          id: `${flipList.groupId}i${numberOfCurrentItem}`,
+          name: newItemName,
+          status: ''
+        }
+        const updateItemsArray = [...flipList.items, newItem]
+        const updateList = Object.assign({...flipList}, {items: updateItemsArray})
+        //save to local
+        localforage.setItem('group-flip', updateList)
+        localforage.setItem('group-flip-newItem', updateItemsArray)
+        //save to sate
+        this.setState({flipList: updateList})
+        //save to database
+        firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(updateItemsArray)
       }
-      const updateItemsArray = [...flipList.items, newItem]
-      const updateList = Object.assign({...flipList}, {items: updateItemsArray})
-      //save to local
-      localforage.setItem('group-flip', updateList)
-      localforage.setItem('group-flip-newItem', updateItemsArray)
-      //save to sate
-      this.setState({flipList: updateList})
-      //save to database
-      firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(updateItemsArray)
-
     } else if(listType==='vote' && voteList){
       const numberOfCurrentItem = voteList.items.length;
       const newItem = {

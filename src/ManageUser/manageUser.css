@@ -104,6 +104,11 @@
   z-index: 15;
 }
 
+.modal-innerbox-large > form {
+  position: relative;
+  top: 4rem;
+}
+
 .modal-form {
   position: relative;
   display: grid;
@@ -112,8 +117,23 @@
   z-index: 20;
 }
 
+.modal-form > div {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.modal-form > div:first-child > input {
+  margin-top: 1rem;
+  font-size: 1.8em;
+  font-family: "Lato", Helvetica, sans-serif, Arial;
+  font-weight: 200;
+  padding: .5rem 1rem;
+  border: .5px solid #8492A6;
+  border-radius: 3px;
+}
+
 .modal-stats-text {
-  font-size: 1.2rem;
+  font-size: 1.4em;
   padding: 1.5rem;
 }
 

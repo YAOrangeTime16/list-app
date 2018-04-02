@@ -134,6 +134,7 @@ export default class Admin extends Component {
 				{ this.state.openStats && 
 							<div className="modal">
 								<div className="modal-innerbox-large">
+								<Button clickAction={this._closeStats} title="X" className="btn-circle"/>
 								{ offlineMessage
 									? <div>{offlineMessage}</div>
 									: (<div className="modal-stats-text">
@@ -144,7 +145,6 @@ export default class Admin extends Component {
 											<div>Group ID: {showGroupID}</div>
 										</div>)
 								}
-									<Button clickAction={this._closeStats} title="Close"/>
 								</div>
 							</div>
 				}

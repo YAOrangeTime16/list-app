@@ -86,14 +86,21 @@
   background: none;
   color: #47525E;
   font-size: 1.4em;
+  border: .5px solid #47525E;
+  border-radius: 28px;
+  width: 30%;
+  text-align: center;
+  padding: 0;
 }
 
 .list-container > .flipItem {
+  cursor: pointer;
   background: #FF9093;
   box-shadow: 2px 2px 7px #47525E;
 }
 
 .list-container > .voteItem {
+  cursor: pointer;
   background: #B8977E;
   box-shadow: 2px 2px 7px #47525E;
 }
