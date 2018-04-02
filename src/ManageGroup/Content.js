@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PageMenu from './PageMenu';
 import ListItem from './ListItem';
+import Chat from '../Chat/Chat';
 
 export default class Content extends Component {
 
@@ -15,7 +16,7 @@ export default class Content extends Component {
       break;
 
       case 'message':
-      return <div>INSTANT MESSAGE!!!</div>
+      return <Chat />
       break;
     }
   }
