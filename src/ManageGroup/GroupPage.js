@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import firebase from '../firebase';
 import localforage from 'localforage';
-import Button from '../General/Button';
 import Header from './Header';
 import Content from './Content';
 
@@ -17,22 +16,23 @@ class GroupPage extends Component {
     const {flipList, voteList, groupInfo} = this.state;
 
     if(listType==='flip' && flipList){
-      const numberOfCurrentItem = flipList.items.length;
-      const newItem = {
-        id: `${flipList.groupId}i${numberOfCurrentItem}`,
-        name: newItemName,
-        status: ''
+      if(newItemName !==''){
+        const numberOfCurrentItem = flipList.items.length;
+        const newItem = {
+          id: `${flipList.groupId}i${numberOfCurrentItem}`,
+          name: newItemName,
+          status: ''
+        }
+        const updateItemsArray = [...flipList.items, newItem]
+        const updateList = Object.assign({...flipList}, {items: updateItemsArray})
+        //save to local
+        localforage.setItem('group-flip', updateList)
+        localforage.setItem('group-flip-newItem', updateItemsArray)
+        //save to sate
+        this.setState({flipList: updateList})
+        //save to database
+        firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(updateItemsArray)
       }
-      const updateItemsArray = [...flipList.items, newItem]
-      const updateList = Object.assign({...flipList}, {items: updateItemsArray})
-      //save to local
-      localforage.setItem('group-flip', updateList)
-      localforage.setItem('group-flip-newItem', updateItemsArray)
-      //save to sate
-      this.setState({flipList: updateList})
-      //save to database
-      firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(updateItemsArray)
-
     } else if(listType==='vote' && voteList){
       const numberOfCurrentItem = voteList.items.length;
       const newItem = {
@@ -230,10 +230,6 @@ class GroupPage extends Component {
             createList={this._createList}
             getUpdate={this._getGroupInfo}
             logoutGroup={logoutGroup} />
-        <Button 
-            clickAction={()=>logoutGroup(()=>history.replace('/'))}
-            title="logout from group"
-            className="btn-secondary logout-group" />
       </div>
     )
   }
