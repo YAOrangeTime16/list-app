@@ -1,6 +1,6 @@
 .admin-grouplist {
   display: grid;
-  grid-template-columns: 10% 85% 5%;
+  grid-template-columns: 10% 55% 5% 30%;
   height: 3rem;
   width: 100%;
   font-size: 1.8em;
@@ -15,11 +15,31 @@
   width: 100%;
 }
 
+.border-bottom {
+  border: none;
+  border-bottom: solid .5px rgba(130, 104, 174, 0.7);
+}
+
 .error-text {
   color: red;
   font-size: 1.6em;
   text-align: center;
   height: 1rem;
+}
+
+.icon-stats {
+  cursor: pointer;
+  background: rgb(174, 104, 139);
+  border-radius: 3px;
+  height: 1.5rem;
+  width: 2.5em;
+  line-height: 1.5rem;
+  color: white;
+  font-size: .8em;
+  padding: .3em 1em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: .5rem;
 }
 
 .logout-admin {
@@ -37,7 +57,7 @@
 
 .modal {
   position: absolute;
-  background-color: rgba(130, 148, 177, 0.7);
+  background-color: rgba(130, 104, 174, 0.9);;
   height: 100%;
   width: 100%;
   top: 0;
@@ -69,7 +89,7 @@
 }
 
 .modal-innerbox > p {
-  font-size: 1.4em;
+  font-size: 1.2rem;
   padding: 1rem;
   text-align: center;
 }
@@ -79,9 +99,14 @@
   background-color: white;
   border-radius: 3px;
   margin: 4rem auto;
-  height: 50%;
+  height: 60%;
   width: 80%;
   z-index: 15;
+}
+
+.modal-innerbox-large > form {
+  position: relative;
+  top: 4rem;
 }
 
 .modal-form {
@@ -91,6 +116,27 @@
   grid-template-rows: auto 3rem auto;
   z-index: 20;
 }
+
+.modal-form > div {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.modal-form > div:first-child > input {
+  margin-top: 1rem;
+  font-size: 1.8em;
+  font-family: "Lato", Helvetica, sans-serif, Arial;
+  font-weight: 200;
+  padding: .5rem 1rem;
+  border: .5px solid #8492A6;
+  border-radius: 3px;
+}
+
+.modal-stats-text {
+  font-size: 1.4em;
+  padding: 1.5rem;
+}
+
 
 .svg-arrowMenu {
   position: relative;

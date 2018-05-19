@@ -1,0 +1,24 @@
+.message-input-form {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 85% auto;
+  position: fixed;
+  bottom: 2rem;
+}
+.message-input {
+  margin-left: 1rem;
+  border-radius: 5px;
+  font-size: 1.8em;
+  padding: 0 .5rem;
+  border: 1px#47525E solid;
+}
+
+.chat-area {
+  font-size: 2.2em;
+  width: 100%;
+}
+
+.svg-sendicon {
+  cursor: pointer;
+  margin-left: 1em;
+}

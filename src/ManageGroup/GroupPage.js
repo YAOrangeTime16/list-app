@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import firebase from '../firebase';
 import localforage from 'localforage';
-import Button from '../General/Button';
 import Header from './Header';
 import Content from './Content';
 
@@ -17,22 +16,23 @@ class GroupPage extends Component {
     const {flipList, voteList, groupInfo} = this.state;
 
     if(listType==='flip' && flipList){
-      const numberOfCurrentItem = flipList.items.length;
-      const newItem = {
-        id: `${flipList.groupId}i${numberOfCurrentItem}`,
-        name: newItemName,
-        status: ''
+      if(newItemName !==''){
+        const numberOfCurrentItem = flipList.items.length;
+        const newItem = {
+          id: `${flipList.groupId}i${numberOfCurrentItem}`,
+          name: newItemName,
+          status: ''
+        }
+        const updateItemsArray = [...flipList.items, newItem]
+        const updateList = Object.assign({...flipList}, {items: updateItemsArray})
+        //save to local
+        localforage.setItem('group-flip', updateList)
+        localforage.setItem('group-flip-newItem', updateItemsArray)
+        //save to sate
+        this.setState({flipList: updateList})
+        //save to database
+        firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(updateItemsArray)
       }
-      const updateItemsArray = [...flipList.items, newItem]
-      const updateList = Object.assign({...flipList}, {items: updateItemsArray})
-      //save to local
-      localforage.setItem('group-flip', updateList)
-      localforage.setItem('group-flip-newItem', updateItemsArray)
-      //save to sate
-      this.setState({flipList: updateList})
-      //save to database
-      firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(updateItemsArray)
-
     } else if(listType==='vote' && voteList){
       const numberOfCurrentItem = voteList.items.length;
       const newItem = {
@@ -71,13 +71,15 @@ class GroupPage extends Component {
         const itemArray = [...flipList.items];
         itemArray.splice(index, 1, updatedStatus);
         const updatedItemObject = Object.assign({...flipList}, {items: itemArray})
-        if(loggedinAsMember){
+        if(loggedinAsMember || loggedinAsAdmin){
           localforage.setItem('group-flip', updatedItemObject)
           localforage.setItem('group-flip-newItem', itemArray)
-        } else if(loggedinAsAdmin){
+        }
+        /* else if(loggedinAsAdmin){
           localforage.setItem(`admin-Group${groupInfo.groupUrl}`, updatedItemObject)
           localforage.setItem(`group-flip-newItem${groupInfo.groupUrl}`, itemArray)
         }
+        */
         this.setState({flipList: updatedItemObject})
         firebase.database().ref(`/flipLists/${groupInfo.listFlipID}/items`).set(itemArray)  
       }
@@ -129,35 +131,54 @@ class GroupPage extends Component {
   }
 
   _getGroupInfo = ()=>{
-    const {loggedinAsAdmin, loggedinAsMember} = this.props;
     //check connection
     const connectedRef = firebase.database().ref('.info/connected');
-    connectedRef.on('value', (snap)=> {
-      if (snap.val() === false) { //offline
-        if(loggedinAsMember){
-          //check the local DB
-          localforage.getItem('group-flip').then(flipInfo=>{
-            flipInfo && this.setState({flipList: flipInfo})
-          })
-          localforage.getItem('group-vote').then(voteInfo=>{
-            voteInfo && this.setState({voteList: voteInfo})
-          })
-          localforage.getItem('group-info').then(groupInfo=>{
-            groupInfo && this.setState({groupInfo})
-          })
-        } else {
+    connectedRef.on('value', snap=> {
+      //offline
+      if (snap.val() === false) {
+        localforage.getItem('group-login').then(status => {
+          if(status){
+            if(status.loggeinasMember){
+              //check the local DB
+              localforage.getItem('group-flip').then(flipInfo=>{
+                flipInfo && this.setState({flipList: flipInfo})
+              })
+              localforage.getItem('group-vote').then(voteInfo=>{
+                voteInfo && this.setState({voteList: voteInfo})
+              })
+              localforage.getItem('group-info').then(groupInfo=>{
+                groupInfo && this.setState({groupInfo})
+              })
+            }
+          } else {
+            const currentGroupID = (this.props.location.pathname === '/groups/admin') && this.props.location.search.substr(9)
+            localforage.iterate((value, key) => {
+              if(key.includes(`admin-Group${currentGroupID}`)){
+                return value
+              }
+            })
+            .then(val=>{
+              localforage.getItem(`adminGroup${currentGroupID}-flip`).then(flipInfo=>{
+                flipInfo && this.setState({flipList: flipInfo})
+              })
+              localforage.getItem(`adminGroup${currentGroupID}-vote`).then(voteInfo=>{
+                voteInfo && this.setState({voteList: voteInfo})
+              })
+              this.setState({groupInfo: val})
+            })
+            .catch(e=>console.log(e.message))
+          }
+        })
 
-        }
       } else {
-        const {groupId, location} = this.props
-        const theGroupsID = (groupId) ? groupId : location.pathname.substr(8);
         //online
-        if(theGroupsID){
-          const groupRef = firebase.database().ref(`/groups/${theGroupsID}`)
+        const {groupId, loggedinAsAdmin} = this.props;
+        const thisGroupID = groupId && groupId //: location.pathname.substr(8);
+        
+        if(thisGroupID){
+          const groupRef = firebase.database().ref(`/groups/${thisGroupID}`)
           groupRef.once('value', info=> {
-            loggedinAsAdmin 
-            ? localforage.setItem(`admin-Group${theGroupsID}`, info.val())
-            : localforage.setItem('group-info', info.val())
+            loggedinAsAdmin && localforage.setItem(`admin-Group${thisGroupID}`, info.val())
             this.setState({groupInfo: info.val()})
           })
           .then(()=>{
@@ -171,7 +192,7 @@ class GroupPage extends Component {
   }
 
   _getFlipListInfo = (flipID, groupID) => {
-    const {loggedinAsAdmin, loggedinAsMember} = this.props;
+    const {loggedinAsAdmin} = this.props;
     if(flipID !==''){
       firebase.database().ref(`/flipLists/${flipID}`)
       .on('value', list => {
@@ -184,7 +205,7 @@ class GroupPage extends Component {
   }
 
   _getVoteListInfo = (voteID, groupID) => {
-    const {loggedinAsAdmin, loggedinAsMember} = this.props;
+    const {loggedinAsAdmin} = this.props;
     if(voteID !==''){
       firebase.database().ref(`/voteLists/${voteID}`)
       .on('value', list => {
@@ -209,10 +230,6 @@ class GroupPage extends Component {
             createList={this._createList}
             getUpdate={this._getGroupInfo}
             logoutGroup={logoutGroup} />
-        <Button 
-            clickAction={()=>logoutGroup(()=>history.replace('/'))}
-            title="logout from group"
-            className="btn-secondary logout-group" />
       </div>
     )
   }
